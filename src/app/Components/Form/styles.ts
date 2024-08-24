@@ -13,6 +13,10 @@ export const Container = styled.div`
 
     background-image: url("public/background.png");
     background-repeat: no-repeat, repeat;
+
+    @media (min-width: 600px) {
+        width: 25%;
+    }
 `;
 
 export const FormContainer = styled.form`
@@ -56,17 +60,17 @@ export const Input = styled.input`
             color: white;
             height: 2.5rem;
         `
-        : props.type === "reset" ? 
-        css`
+        : props.type === "reset" ?
+            css`
             background-color: blue;
             color: white;
             filter: opacity(30%);
             height: 2.5rem;
         `
-        : css`
+            : css`
             background-color: #f3f5f9;
             color: blue;
-            height: 1.5rem;
+            height: 2rem;
         `
     };
 `;
@@ -78,7 +82,8 @@ export const TextArea = styled.textarea`
     background-color: #f3f5f9;
     border: none;
     color: grey;
-    outline: blue;
+    border-radius: 5px;
+    outline: 1px solid blue;
 `;
 
 export const Select = styled.select`
@@ -88,6 +93,7 @@ export const Select = styled.select`
     border: none;
     color: grey;
     outline: blue;
+    border-radius: 5px;
 `;
 
 export const Title = styled.h1`

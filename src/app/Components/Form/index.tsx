@@ -9,7 +9,7 @@ export default function Form () {
         <Title>Pesquisa de Satisfação</Title>
             <FormContainer>
                 <LabelForm>Nome (opcional)</LabelForm>
-                <Input type="text" placeholder="Coloque seu nome/"/>
+                <Input type="text" placeholder="Coloque seu nome"/>
                 <LabelForm>E-mail (opcional)</LabelForm>
                 <Input type="email" placeholder="Coloque seu email"/>
                 <LabelForm>Satisfação em Geral</LabelForm>
