@@ -7,9 +7,9 @@ export const Container = styled.div`
     align-items: center;
     background-color: white;
     width: 90%;
-    height: 50rem;
+    height: 60rem;
     border-radius: 30px;
-    padding: 2rem 1rem;
+    padding: 0rem 1rem 1rem;
 
     background-image: url("public/background.png");
     background-repeat: no-repeat, repeat;
@@ -35,12 +35,12 @@ export const LabelForm = styled.label`
     width: 100%;
     height: 1.5rem;
     color: blue;
-    font-size: 0.8rem;
+    font-size: 1rem;
+    padding: 0.5rem 0;
 `
 
 export const Input = styled.input`
     width: 100%;
-    height: 1.5rem;
     border: none;
     color: grey;
     border-radius: 5px;
@@ -50,18 +50,27 @@ export const Input = styled.input`
         outline: 1px solid blue;
     }
 
-    ${(props) => props.type === "submit" || props.type === "reset" ? css`
-        background-color: blue;
-        color: white;
-        :hover {
-            background-color: cadetblue;
-        }
-    `: css`
-        background-color: #f3f5f9;
-        color: blue;
-        
-    `}
-    `
+    ${(props) => props.type === "submit" ?
+        css`
+            background-color: blue;
+            color: white;
+            height: 2.5rem;
+        `
+        : props.type === "reset" ? 
+        css`
+            background-color: blue;
+            color: white;
+            filter: opacity(30%);
+            height: 2.5rem;
+        `
+        : css`
+            background-color: #f3f5f9;
+            color: blue;
+            height: 1.5rem;
+        `
+    };
+`;
+
 export const TextArea = styled.textarea`
     padding: 0.5rem;
     width: 100%;
@@ -70,7 +79,7 @@ export const TextArea = styled.textarea`
     border: none;
     color: grey;
     outline: blue;
-    `
+`;
 
 export const Select = styled.select`
     width: 100%;
@@ -80,3 +89,9 @@ export const Select = styled.select`
     color: grey;
     outline: blue;
 `;
+
+export const Title = styled.h1`
+    color: blue;
+    font-size: 1.2rem;
+    padding: 0 0 1rem;
+`
