@@ -11,9 +11,6 @@ export const Container = styled.div`
     border-radius: 30px;
     padding: 0rem 1rem 1rem;
 
-    background-image: url("public/background.png");
-    background-repeat: no-repeat, repeat;
-
     @media (min-width: 600px) {
         width: 25%;
     }
@@ -69,7 +66,6 @@ export const Input = styled.input`
         `
             : css`
             background-color: #f3f5f9;
-            color: blue;
             height: 2rem;
         `
     };
@@ -94,6 +90,7 @@ export const Select = styled.select`
     color: grey;
     outline: blue;
     border-radius: 5px;
+    padding: 0 0.5rem;
 `;
 
 export const Title = styled.h1`
