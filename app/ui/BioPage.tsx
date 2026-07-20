@@ -1,0 +1,14 @@
+"use client";
+import Link from "next/link";
+import { useEffect,useState } from "react";
+import { catalog,Product } from "../catalog";
+const phone="5591985356011";
+const wa=(message:string)=>`https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+export default function BioPage(){const [products,setProducts]=useState<Product[]>(catalog);useEffect(()=>{fetch("/api/products").then(r=>r.ok?r.json():null).then(d=>d?.products&&setProducts(d.products)).catch(()=>{})},[]);const featured=products.filter(p=>p.active!==false&&p.publicVisible!==false&&p.featured).slice(0,8);return <main className="bio-page"><div className="bio-shell">
+ <header className="bio-cover"><img src="/laboratorio-hero.jpg" alt="Aparelhos ortodônticos produzidos pelo Laboratório Orto Fernandes"/><div className="cover-shade"/></header>
+ <section className="bio-profile"><div className="bio-avatar">OF</div><p className="overline">LABORATÓRIO ORTODÔNTICO</p><h1>Orto Fernandes</h1><p className="bio-copy">Qualidade, precisão e cuidado na produção de aparelhos ortodônticos para dentistas e clínicas.</p><div className="bio-meta"><span>📍 Belém e região</span><span>✦ Atendimento especializado</span></div></section>
+ <section className="bio-actions"><a className="bio-main-action" href={wa("Olá! Vim pelo Instagram da Orto Fernandes e gostaria de receber o link do catálogo completo com preços.")} target="_blank"><span className="action-icon">▤</span><span><b>Ver catálogo com preços</b><small>Receba o link pelo WhatsApp</small></span><i>›</i></a><a className="bio-secondary-action" href={wa("Olá! Vim pelo Instagram da Orto Fernandes e gostaria de falar com a equipe.")} target="_blank"><span>◉</span> Falar com a equipe no WhatsApp</a></section>
+ <section className="bio-products"><div className="bio-section-title"><div><span>CONHEÇA NOSSO TRABALHO</span><h2>Alguns aparelhos</h2></div><Link href="/catalogo">Ver todos</Link></div><div className="bio-product-list">{featured.map((p,i)=><article className="bio-product" key={p.id}><div className={`product-photo product-photo-${i%3}`}>{p.imageUrl?<img src={p.imageUrl} alt={p.name}/>:<span>OF</span>}</div><div className="bio-product-info"><small>{p.category}</small><h3>{p.name}</h3><p>{p.description}</p><a href={wa(`Olá! Vim pelo Instagram da Orto Fernandes e gostaria de solicitar o produto “${p.name}”. Poderia me passar mais informações?`)} target="_blank">Tenho interesse <b>→</b></a></div></article>)}</div></section>
+ <section className="about-strip"><span>DESDE O PRIMEIRO CONTATO</span><h2>Excelência em cada detalhe.</h2><p>Trabalhamos em parceria com profissionais para entregar aparelhos com acabamento, precisão e agilidade.</p></section>
+ <footer className="bio-footer"><div className="footer-logo">OF</div><p>Laboratório Orto Fernandes</p><span>98535-6011 · 98316-0016</span><div><Link href="/cliente">Área do cliente</Link><Link href="/admin">Administração</Link></div></footer>
+ </div></main>}
