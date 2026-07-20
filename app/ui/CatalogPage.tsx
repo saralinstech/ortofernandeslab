@@ -4,7 +4,7 @@ import Link from "next/link";
 import { catalog,Product } from "../catalog";
 
 type CartItem=Product&{quantity:number};
-const phone="5591985356011";
+const phone="5591985667411";
 const money=(n:number)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const wa=(message:string)=>`https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
@@ -18,7 +18,7 @@ export default function CatalogPage(){
  const change=(id:number,delta:number)=>setCart(items=>items.map(i=>i.id===id?{...i,quantity:i.quantity+delta}:i).filter(i=>i.quantity>0));
  const orderMessage=()=>{const lines=cart.map((item,index)=>`${index+1}. *${item.name}*\n   Quantidade: ${item.quantity}\n   Valor unitário: ${money(item.price)}\n   Subtotal: ${money(item.price*item.quantity)}`).join("\n\n");return `*SOLICITAÇÃO DE ENCOMENDA*\n*Laboratório Orto Fernandes*\n\nOlá! Consultei o catálogo e gostaria de solicitar um orçamento para os itens abaixo:\n\n${lines}\n\n────────────────────\n*Quantidade total:* ${count} ${count===1?"item":"itens"}\n*Valor estimado:* ${money(total)}\n────────────────────\n${customer?`*Solicitante:* ${customer}\n`:""}\nGostaria de confirmar a disponibilidade, o prazo de produção e as condições de entrega. Obrigado!`};
  return <main className="catalog-page">
-  <header className="catalog-header"><Link href="/" className="back">← Bio</Link><div className="catalog-brand"><span>OF</span><div><b>ORTO FERNANDES</b><small>CATÁLOGO COM PREÇOS</small></div></div><a href="https://wa.me/5591985356011" target="_blank">WhatsApp</a></header>
+  <header className="catalog-header"><Link href="/" className="back">← Bio</Link><div className="catalog-brand"><span>OF</span><div><b>ORTO FERNANDES</b><small>CATÁLOGO COM PREÇOS</small></div></div><a href="https://wa.me/5591985667411" target="_blank">WhatsApp</a></header>
   <section className="catalog-intro"><span className="kicker">CATÁLOGO 2026.2</span><h1>Aparelhos ortodônticos</h1><p>Adicione quantos produtos quiser ao carrinho e envie uma única solicitação pelo WhatsApp.</p><input aria-label="Buscar produto" placeholder="Buscar aparelho..." value={query} onChange={e=>setQuery(e.target.value)}/></section>
   <div className="catalog-filters">{cats.map(c=><button className={filter===c?"active":""} onClick={()=>setFilter(c)} key={c}>{c}</button>)}</div>
   <section className="price-grid">{shown.map((p,i)=>{const inCart=cart.find(item=>item.id===p.id)?.quantity||0;return <article className="price-card" key={p.id}><div className={`price-image product-photo-${i%3}`}>{p.imageUrl?<img src={p.imageUrl} alt={p.name}/>:<span>OF</span>}</div><div><small>{p.category}</small><h2>{p.name}</h2><p>{p.description}</p><div className="price-line"><strong>{money(p.price)}</strong><a href={wa(`Olá! Consultei o catálogo da Orto Fernandes e gostaria de encomendar “${p.name}”.`)} target="_blank">Pedir este</a></div><button className={`add-cart ${inCart?"added":""}`} onClick={()=>add(p)}>{inCart?`Adicionar mais · ${inCart} no carrinho`:`+ Adicionar ao carrinho`}</button></div></article>})}</section>
