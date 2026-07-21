@@ -6,6 +6,7 @@ import { getAdminAccess, hashPassword } from "../../admin-auth";
 async function auth() {
   const access = await getAdminAccess();
   if (!access) throw new Error("UNAUTHORIZED");
+  if (access.mustChangePassword) throw new Error("PASSWORD_CHANGE_REQUIRED");
   return access;
 }
 
@@ -17,7 +18,7 @@ export async function GET() {
       db.select().from(orders).orderBy(desc(orders.id)).limit(200),
       db.select().from(clients).orderBy(desc(clients.id)),
       db.select().from(orderEvents).orderBy(desc(orderEvents.id)).limit(1000),
-      access.role === "master" ? db.select({ id: staff.id, email: staff.email, name: staff.name, role: staff.role, active: staff.active, createdAt: staff.createdAt }).from(staff).orderBy(desc(staff.id)) : Promise.resolve([]),
+      access.role === "master" ? db.select({ id: staff.id, email: staff.email, name: staff.name, role: staff.role, active: staff.active, mustChangePassword: staff.mustChangePassword, createdAt: staff.createdAt }).from(staff).orderBy(desc(staff.id)) : Promise.resolve([]),
     ]);
     return Response.json({ role: access.role, orders: orderRows.map((order) => ({ ...order, total: access.role === "master" ? order.total : null })), clients: clientRows, events: eventRows, staff: staffRows });
   } catch {
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
     if (body.type === "staff" && access.role === "master") {
       const password = String(body.password || "");
       if (password.length < 12) return Response.json({ error: "A senha precisa ter pelo menos 12 caracteres" }, { status: 400 });
-      const [row] = await db.insert(staff).values({ email: String(body.email).trim().toLowerCase(), name: String(body.name), passwordHash: await hashPassword(password), role: String(body.role || "collaborator") }).returning();
+      const [row] = await db.insert(staff).values({ email: String(body.email).trim().toLowerCase(), name: String(body.name), passwordHash: await hashPassword(password), mustChangePassword: true, role: String(body.role || "collaborator") }).returning();
       return Response.json({ staff: { id: row.id, email: row.email, name: row.name, role: row.role, active: row.active } }, { status: 201 });
     }
     if (body.type === "order") {
@@ -84,7 +85,7 @@ export async function PATCH(request: Request) {
     if (body.type === "staff-password" && access.role === "master") {
       const password = String(body.password || "");
       if (password.length < 12) return Response.json({ error: "A senha precisa ter pelo menos 12 caracteres" }, { status: 400 });
-      const [row] = await db.update(staff).set({ passwordHash: await hashPassword(password) }).where(eq(staff.id, Number(body.id))).returning();
+      const [row] = await db.update(staff).set({ passwordHash: await hashPassword(password), mustChangePassword: true, passwordChangedAt: null }).where(eq(staff.id, Number(body.id))).returning();
       await db.delete(adminSessions).where(eq(adminSessions.staffId, Number(body.id)));
       return Response.json({ staff: { id: row.id, email: row.email, name: row.name, role: row.role, active: row.active } });
     }

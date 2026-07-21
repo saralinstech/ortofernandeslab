@@ -9,6 +9,7 @@ export async function POST(request: Request) {
     const email = String(form.get("email") || "").trim().toLowerCase();
     const password = String(form.get("password") || "");
     let sessionId = "";
+    let mustChangePassword = false;
 
     if (email === MASTER_EMAIL && await verifyPassword(password, INITIAL_MASTER_HASH)) {
       sessionId = MASTER_SESSION_TOKEN;
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
         return Response.redirect(new URL("/admin/login?erro=1", request.url), 303);
       }
       sessionId = crypto.randomUUID();
+      mustChangePassword = user.mustChangePassword;
       const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14);
       await db.insert(adminSessions).values({ id: sessionId, staffId: user.id, expiresAt: expires.toISOString() });
     }
@@ -26,7 +28,7 @@ export async function POST(request: Request) {
     return new Response(null, {
       status: 303,
       headers: {
-        Location: new URL("/admin", request.url).toString(),
+        Location: new URL(mustChangePassword ? "/admin/perfil" : "/admin", request.url).toString(),
         "Set-Cookie": `of_admin_session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600`,
       },
     });

@@ -44,12 +44,12 @@ export async function ensureMaster() {
   const [found] = await db.select().from(staff).where(eq(staff.email, MASTER_EMAIL)).limit(1);
   if (found) {
     if (!found.passwordHash) {
-      const [updated] = await db.update(staff).set({ passwordHash: INITIAL_MASTER_HASH, role: "master", active: true }).where(eq(staff.id, found.id)).returning();
+      const [updated] = await db.update(staff).set({ passwordHash: INITIAL_MASTER_HASH, mustChangePassword: false, role: "master", active: true }).where(eq(staff.id, found.id)).returning();
       return updated;
     }
     return found;
   }
-  const [created] = await db.insert(staff).values({ email: MASTER_EMAIL, name: "Administrador Master", passwordHash: INITIAL_MASTER_HASH, role: "master" }).returning();
+  const [created] = await db.insert(staff).values({ email: MASTER_EMAIL, name: "Administrador Master", passwordHash: INITIAL_MASTER_HASH, mustChangePassword: false, role: "master" }).returning();
   return created;
 }
 
@@ -59,11 +59,11 @@ export async function getAdminAccess() {
     const sessionId = jar.get("of_admin_session")?.value;
     if (!sessionId) return null;
     if (sessionId === MASTER_SESSION_TOKEN) {
-      return { displayName: "Administrador Master", email: MASTER_EMAIL, role: "master" as const, id: 0 };
+      return { displayName: "Administrador Master", email: MASTER_EMAIL, role: "master" as const, id: 0, mustChangePassword: false };
     }
     const db = getDb();
-    const [row] = await db.select({ id: staff.id, email: staff.email, name: staff.name, role: staff.role, active: staff.active }).from(adminSessions).innerJoin(staff, eq(adminSessions.staffId, staff.id)).where(and(eq(adminSessions.id, sessionId), gt(adminSessions.expiresAt, new Date().toISOString()), eq(staff.active, true))).limit(1);
-    return row ? { displayName: row.name, email: row.email, role: row.role as "master" | "collaborator", id: row.id } : null;
+    const [row] = await db.select({ id: staff.id, email: staff.email, name: staff.name, role: staff.role, active: staff.active, mustChangePassword: staff.mustChangePassword }).from(adminSessions).innerJoin(staff, eq(adminSessions.staffId, staff.id)).where(and(eq(adminSessions.id, sessionId), gt(adminSessions.expiresAt, new Date().toISOString()), eq(staff.active, true))).limit(1);
+    return row ? { displayName: row.name, email: row.email, role: row.role as "master" | "collaborator", id: row.id, mustChangePassword: row.mustChangePassword } : null;
   } catch {
     return null;
   }
