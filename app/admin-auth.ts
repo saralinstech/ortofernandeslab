@@ -4,8 +4,7 @@ import { getDb } from "../db";
 import { adminSessions, staff } from "../db/schema";
 
 export const MASTER_EMAIL = "saralinstech@gmail.com";
-export const INITIAL_MASTER_HASH = "2bce7c586ded9c9c0921b8ea66ac306b6a709866bec7f4bcb34cb4a0650a8afd";
-export const MASTER_SESSION_TOKEN = "6db7bb634406c9ccb93165273828272cd46c1529d798547f2a74a7d161d0a03a";
+export const ADMIN_SESSION_COOKIE = "__Host-of_admin_session";
 
 async function sha256(value: string) {
   const bytes = new TextEncoder().encode(value);
@@ -39,28 +38,11 @@ export async function verifyPassword(value: string, stored: string) {
   return difference === 0;
 }
 
-export async function ensureMaster() {
-  const db = getDb();
-  const [found] = await db.select().from(staff).where(eq(staff.email, MASTER_EMAIL)).limit(1);
-  if (found) {
-    if (!found.passwordHash) {
-      const [updated] = await db.update(staff).set({ passwordHash: INITIAL_MASTER_HASH, mustChangePassword: false, role: "master", active: true }).where(eq(staff.id, found.id)).returning();
-      return updated;
-    }
-    return found;
-  }
-  const [created] = await db.insert(staff).values({ email: MASTER_EMAIL, name: "Administrador Master", passwordHash: INITIAL_MASTER_HASH, mustChangePassword: false, role: "master" }).returning();
-  return created;
-}
-
 export async function getAdminAccess() {
   try {
     const jar = await cookies();
-    const sessionId = jar.get("of_admin_session")?.value;
+    const sessionId = jar.get(ADMIN_SESSION_COOKIE)?.value;
     if (!sessionId) return null;
-    if (sessionId === MASTER_SESSION_TOKEN) {
-      return { displayName: "Administrador Master", email: MASTER_EMAIL, role: "master" as const, id: 0, mustChangePassword: false };
-    }
     const db = getDb();
     const [row] = await db.select({ id: staff.id, email: staff.email, name: staff.name, role: staff.role, active: staff.active, mustChangePassword: staff.mustChangePassword }).from(adminSessions).innerJoin(staff, eq(adminSessions.staffId, staff.id)).where(and(eq(adminSessions.id, sessionId), gt(adminSessions.expiresAt, new Date().toISOString()), eq(staff.active, true))).limit(1);
     return row ? { displayName: row.name, email: row.email, role: row.role as "master" | "collaborator", id: row.id, mustChangePassword: row.mustChangePassword } : null;

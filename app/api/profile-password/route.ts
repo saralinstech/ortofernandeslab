@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     await db.insert(adminSessions).values({ id: sessionId, staffId: access.id, expiresAt: expires.toISOString() });
 
     return Response.json({ ok: true }, {
-      headers: { "Set-Cookie": `of_admin_session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600` },
+      headers: { "Set-Cookie": `__Host-of_admin_session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600` },
     });
   } catch {
     return Response.json({ error: "Não foi possível alterar a senha. Tente novamente." }, { status: 500 });

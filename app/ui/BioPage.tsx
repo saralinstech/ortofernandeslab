@@ -2,7 +2,7 @@
 import { useEffect,useState } from "react";
 import { ArrowRight,BadgeCheck,MapPin,MessageCircle } from "lucide-react";
 import { catalog,Product } from "../catalog";
-const phone="5591985667411";
+const phone="5591983160016";
 const wa=(message:string)=>`https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 export default function BioPage(){const [products,setProducts]=useState<Product[]>(catalog);useEffect(()=>{fetch("/api/products").then(r=>r.ok?r.json():null).then(d=>d?.products&&setProducts(d.products)).catch(()=>{})},[]);const featured=products.filter(p=>p.active!==false&&p.publicVisible!==false&&p.featured).slice(0,8);return <main className="bio-page"><div className="bio-shell">
  <header className="bio-cover"><img src="/laboratorio-hero.jpg" alt="Aparelhos ortodônticos produzidos pelo Laboratório Orto Fernandes"/><div className="cover-shade"/></header>
