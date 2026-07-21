@@ -1,10 +1,91 @@
 import { sql } from "drizzle-orm";
-import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
-export const customers=sqliteTable("customers",{id:integer("id").primaryKey({autoIncrement:true}),name:text("name").notNull(),clinic:text("clinic"),phone:text("phone").notNull(),email:text("email").notNull(),cro:text("cro"),createdAt:text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`)});
-export const orders=sqliteTable("orders",{id:integer("id").primaryKey({autoIncrement:true}),customerName:text("customer_name"),phone:text("phone"),items:text("items").notNull(),total:real("total").notNull(),status:text("status").notNull().default("Aguardando confirmação"),source:text("source").notNull().default("catalog"),createdBy:text("created_by"),clientId:integer("client_id"),notes:text("notes"),updatedAt:text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),createdAt:text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`)});
-export const products=sqliteTable("products",{id:integer("id").primaryKey({autoIncrement:true}),name:text("name").notNull(),category:text("category").notNull(),price:real("price").notNull(),description:text("description").notNull().default(""),imageUrl:text("image_url"),featured:integer("featured",{mode:"boolean"}).notNull().default(false),publicVisible:integer("public_visible",{mode:"boolean"}).notNull().default(true),active:integer("active",{mode:"boolean"}).notNull().default(true)});
+import {
+  boolean,
+  doublePrecision,
+  integer,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 
-export const clients=sqliteTable("clients",{id:integer("id").primaryKey({autoIncrement:true}),name:text("name").notNull(),clinic:text("clinic"),phone:text("phone").notNull(),email:text("email"),cro:text("cro"),notes:text("notes"),active:integer("active",{mode:"boolean"}).notNull().default(true),createdAt:text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`)});
-export const staff=sqliteTable("staff",{id:integer("id").primaryKey({autoIncrement:true}),email:text("email").notNull().unique(),name:text("name").notNull(),passwordHash:text("password_hash").notNull().default(""),mustChangePassword:integer("must_change_password",{mode:"boolean"}).notNull().default(true),passwordChangedAt:text("password_changed_at"),role:text("role").notNull().default("collaborator"),active:integer("active",{mode:"boolean"}).notNull().default(true),createdAt:text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`)});
-export const adminSessions=sqliteTable("admin_sessions",{id:text("id").primaryKey(),staffId:integer("staff_id").notNull(),expiresAt:text("expires_at").notNull(),createdAt:text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`)});
-export const orderEvents=sqliteTable("order_events",{id:integer("id").primaryKey({autoIncrement:true}),orderId:integer("order_id").notNull(),type:text("type").notNull(),status:text("status"),content:text("content"),createdBy:text("created_by"),createdAt:text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`)});
+const createdAt = () => timestamp("created_at", { withTimezone: true, mode: "string" }).notNull().defaultNow();
+
+export const customers = pgTable("customers", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  clinic: text("clinic"),
+  phone: text("phone").notNull(),
+  email: text("email").notNull(),
+  cro: text("cro"),
+  createdAt: createdAt(),
+});
+
+export const clients = pgTable("clients", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  clinic: text("clinic"),
+  phone: text("phone").notNull(),
+  email: text("email"),
+  cro: text("cro"),
+  notes: text("notes"),
+  active: boolean("active").notNull().default(true),
+  createdAt: createdAt(),
+});
+
+export const orders = pgTable("orders", {
+  id: serial("id").primaryKey(),
+  customerName: text("customer_name"),
+  phone: text("phone"),
+  items: text("items").notNull(),
+  total: doublePrecision("total").notNull(),
+  status: text("status").notNull().default("Aguardando confirmação"),
+  source: text("source").notNull().default("catalog"),
+  createdBy: text("created_by"),
+  clientId: integer("client_id").references(() => clients.id, { onDelete: "set null" }),
+  notes: text("notes"),
+  updatedAt: timestamp("updated_at", { withTimezone: true, mode: "string" }).notNull().defaultNow(),
+  createdAt: createdAt(),
+});
+
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  category: text("category").notNull(),
+  price: doublePrecision("price").notNull(),
+  description: text("description").notNull().default(""),
+  imageUrl: text("image_url"),
+  featured: boolean("featured").notNull().default(false),
+  publicVisible: boolean("public_visible").notNull().default(true),
+  active: boolean("active").notNull().default(true),
+});
+
+export const staff = pgTable("staff", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull(),
+  name: text("name").notNull(),
+  passwordHash: text("password_hash").notNull().default(""),
+  mustChangePassword: boolean("must_change_password").notNull().default(true),
+  passwordChangedAt: timestamp("password_changed_at", { withTimezone: true, mode: "string" }),
+  role: text("role").notNull().default("collaborator"),
+  active: boolean("active").notNull().default(true),
+  createdAt: createdAt(),
+}, (table) => [uniqueIndex("staff_email_unique").on(sql`lower(${table.email})`)]);
+
+export const adminSessions = pgTable("admin_sessions", {
+  id: text("id").primaryKey(),
+  staffId: integer("staff_id").notNull().references(() => staff.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at", { withTimezone: true, mode: "string" }).notNull(),
+  createdAt: createdAt(),
+});
+
+export const orderEvents = pgTable("order_events", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
+  type: text("type").notNull(),
+  status: text("status"),
+  content: text("content"),
+  createdBy: text("created_by"),
+  createdAt: createdAt(),
+});
