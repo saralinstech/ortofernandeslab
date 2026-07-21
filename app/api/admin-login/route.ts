@@ -23,9 +23,13 @@ export async function POST(request: Request) {
       await db.insert(adminSessions).values({ id: sessionId, staffId: user.id, expiresAt: expires.toISOString() });
     }
 
-    const response = Response.redirect(new URL("/admin", request.url), 303);
-    response.headers.append("Set-Cookie", `of_admin_session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600`);
-    return response;
+    return new Response(null, {
+      status: 303,
+      headers: {
+        Location: new URL("/admin", request.url).toString(),
+        "Set-Cookie": `of_admin_session=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600`,
+      },
+    });
   } catch {
     return Response.redirect(new URL("/admin/login?erro=1", request.url), 303);
   }
