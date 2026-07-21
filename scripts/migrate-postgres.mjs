@@ -12,7 +12,10 @@ if (!databaseUrl.startsWith("postgres://") && !databaseUrl.startsWith("postgresq
   process.exit(1);
 }
 
-const ssl = process.env.DATABASE_SSL?.toLowerCase() === "disable" ? false : "require";
+const urlDisablesSsl = /(?:\?|&)sslmode=disable(?:&|$)/i.test(databaseUrl);
+const ssl = process.env.DATABASE_SSL?.toLowerCase() === "disable" || urlDisablesSsl
+  ? false
+  : "require";
 const sql = postgres(databaseUrl, { ssl, max: 1, prepare: false });
 
 try {
