@@ -29,7 +29,8 @@ export async function POST(request: Request) {
         "Set-Cookie": `${ADMIN_SESSION_COOKIE}=${sessionId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1209600`,
       },
     });
-  } catch {
+  } catch (error) {
+    console.error("[admin-login] authentication failure", error instanceof Error ? error.message : "unknown error");
     return Response.redirect(new URL("/admin/login?erro=1", request.url), 303);
   }
 }
