@@ -15,15 +15,20 @@ function databaseUrl() {
   return value;
 }
 
+function wantsInsecureConnection(url: string) {
+  return /(?:\?|&)sslmode=disable(?:&|$)/i.test(url);
+}
+
 export function getDb() {
   if (database) return database;
 
-  const ssl = process.env.DATABASE_SSL?.toLowerCase() === "disable"
+  const url = databaseUrl();
+  const ssl = process.env.DATABASE_SSL?.toLowerCase() === "disable" || wantsInsecureConnection(url)
     ? false
     : "require";
   const max = Math.max(1, Math.min(10, Number(process.env.DATABASE_POOL_MAX || 5)));
 
-  client = postgres(databaseUrl(), {
+  client = postgres(url, {
     ssl,
     max,
     idle_timeout: 20,
