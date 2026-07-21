@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { adminSessions, staff } from "../../../db/schema";
-import { hashPassword, INITIAL_MASTER_HASH, MASTER_EMAIL, MASTER_SESSION_TOKEN } from "../../admin-auth";
+import { INITIAL_MASTER_HASH, MASTER_EMAIL, MASTER_SESSION_TOKEN, verifyPassword } from "../../admin-auth";
 
 export async function POST(request: Request) {
   try {
@@ -10,12 +10,12 @@ export async function POST(request: Request) {
     const password = String(form.get("password") || "");
     let sessionId = "";
 
-    if (email === MASTER_EMAIL && await hashPassword(password) === INITIAL_MASTER_HASH) {
+    if (email === MASTER_EMAIL && await verifyPassword(password, INITIAL_MASTER_HASH)) {
       sessionId = MASTER_SESSION_TOKEN;
     } else {
       const db = getDb();
       const [user] = await db.select().from(staff).where(eq(staff.email, email)).limit(1);
-      if (!user || !user.active || user.passwordHash !== await hashPassword(password)) {
+      if (!user || !user.active || !await verifyPassword(password, user.passwordHash)) {
         return Response.redirect(new URL("/admin/login?erro=1", request.url), 303);
       }
       sessionId = crypto.randomUUID();
