@@ -15,6 +15,13 @@
       "when": 1784590970196,
       "tag": "0001_green_network",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1784592712505,
+      "tag": "0002_daffy_sharon_carter",
+      "breakpoints": true
     }
   ]
 }

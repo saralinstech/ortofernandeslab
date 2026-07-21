@@ -1,0 +1,3 @@
+import { eq,and } from "drizzle-orm";import { getChatGPTUser } from "./chatgpt-auth";import { getDb } from "../db";import { staff } from "../db/schema";
+export const MASTER_EMAIL="saralinstech@gmail.com";
+export async function getAdminAccess(){const user=await getChatGPTUser();if(!user)return null;if(user.email.toLowerCase()===MASTER_EMAIL)return {...user,role:"master" as const};try{const db=getDb();const [row]=await db.select().from(staff).where(and(eq(staff.email,user.email.toLowerCase()),eq(staff.active,true))).limit(1);return row?{...user,role:row.role as "master"|"collaborator"}:null}catch{return null}}
