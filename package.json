@@ -13,7 +13,7 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "db:postgres:generate": "drizzle-kit generate --config=drizzle.postgres.config.ts",
-    "db:postgres:migrate": "node scripts/migrate-postgres.mjs"
+    "db:postgres:migrate": "node --env-file-if-exists=.env.local scripts/migrate-postgres.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

@@ -3,7 +3,12 @@ import postgres from "postgres";
 
 const databaseUrl = process.env.DATABASE_URL?.trim();
 if (!databaseUrl) {
-  console.error("DATABASE_URL não configurada.");
+  console.error("DATABASE_URL não configurada. Preencha .env.local com a URL real do PostgreSQL.");
+  process.exit(1);
+}
+
+if (!databaseUrl.startsWith("postgres://") && !databaseUrl.startsWith("postgresql://")) {
+  console.error("DATABASE_URL inválida. Use uma URL começando com postgres:// ou postgresql://.");
   process.exit(1);
 }
 
