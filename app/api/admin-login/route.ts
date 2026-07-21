@@ -5,7 +5,7 @@ import { hashPassword, INITIAL_MASTER_HASH, MASTER_EMAIL, MASTER_SESSION_TOKEN }
 
 export async function POST(request: Request) {
   try {
-    const form = await request.formData();
+    const form = new URLSearchParams(await request.text());
     const email = String(form.get("email") || "").trim().toLowerCase();
     const password = String(form.get("password") || "");
     let sessionId = "";
