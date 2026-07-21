@@ -3,6 +3,7 @@ import { Manrope, Playfair_Display } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 import "./admin.css";
+import "./bio.css";
 
 const manrope = Manrope({ variable: "--font-sans", subsets: ["latin"] });
 const playfair = Playfair_Display({ variable: "--font-display", subsets: ["latin"] });
