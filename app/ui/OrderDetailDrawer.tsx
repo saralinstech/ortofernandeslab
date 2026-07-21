@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Clock3, MessageSquare, Package, Plus, Save, Trash2, Truck, X } from "lucide-react";
+import { Ban, BadgeCheck, CircleCheckBig, CircleDashed, Clock3, Cog, Hourglass, MessageSquare, Package, PackageCheck, Pencil, Plus, Save, Trash2, Truck, X } from "lucide-react";
 import type { Product } from "../catalog";
 
 type OrderItem = { id?: number; name: string; price: number; quantity: number };
@@ -11,6 +11,20 @@ export type OrderRecord = { id: number; customerName: string | null; phone: stri
 
 const statuses = ["Aguardando confirmação", "Confirmado", "Não finalizado", "Em produção", "Pronto", "Saiu para entrega", "Entregue", "Cancelado"];
 const money = (value: number) => value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+const statusVisual = (status?: string | null) => {
+  switch (status) {
+    case "Aguardando confirmação": return { icon: <Hourglass/>, className: "waiting" };
+    case "Confirmado": return { icon: <BadgeCheck/>, className: "confirmed" };
+    case "Não finalizado": return { icon: <CircleDashed/>, className: "unfinished" };
+    case "Em produção": return { icon: <Cog/>, className: "production" };
+    case "Pronto": return { icon: <PackageCheck/>, className: "ready" };
+    case "Saiu para entrega": return { icon: <Truck/>, className: "delivery" };
+    case "Entregue": return { icon: <CircleCheckBig/>, className: "delivered" };
+    case "Cancelado": return { icon: <Ban/>, className: "cancelled" };
+    default: return { icon: <Clock3/>, className: "status" };
+  }
+};
 
 export default function OrderDetailDrawer({ order, products, clients, events, role, onClose, onSave, onComment }: { order: OrderRecord; products: Product[]; clients: Client[]; events: OrderEventRecord[]; role: "master" | "collaborator"; onClose: () => void; onSave: (data: Record<string, unknown>) => Promise<void>; onComment: (content: string) => Promise<void> }) {
   const [customerName, setCustomerName] = useState(order.customerName || "");
@@ -53,7 +67,10 @@ export default function OrderDetailDrawer({ order, products, clients, events, ro
         <div className="detail-section"><div className="detail-title"><MessageSquare/><div><h3>Dados e observações</h3><p>Informações operacionais deste pedido.</p></div></div><div className="detail-fields"><label>Cliente cadastrado<select value={clientId} onChange={(event) => setClientId(event.target.value)}><option value="">Não vinculado</option>{clients.map((client) => <option key={client.id} value={client.id}>{client.name}{client.clinic ? ` · ${client.clinic}` : ""}</option>)}</select></label><label>Nome ou clínica<input value={customerName} onChange={(event) => setCustomerName(event.target.value)}/></label><label>WhatsApp<input value={phone} onChange={(event) => setPhone(event.target.value)}/></label><label>Status<select value={status} onChange={(event) => setStatus(event.target.value)}>{statuses.map((value) => <option key={value}>{value}</option>)}</select></label><label className="full">Observações gerais<textarea value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Prazo, referência clínica, instruções de entrega..."/></label></div><button className="save-order-detail" onClick={save} disabled={saving}><Save/>{saving ? "Salvando..." : "Salvar alterações"}</button></div>
         <div className="detail-section"><div className="detail-title"><MessageSquare/><div><h3>Registrar ocorrência</h3><p>Adicione informações sobre problemas, contatos ou decisões.</p></div></div><textarea className="comment-box" value={comment} onChange={(event) => setComment(event.target.value)} placeholder="Ex.: Cliente confirmou o endereço; entrega reagendada para amanhã..."/><button className="add-comment" onClick={sendComment} disabled={!comment.trim()}><Plus/>Adicionar à linha do tempo</button></div>
       </section>
-      <aside className="order-timeline"><div className="detail-title"><Clock3/><div><h3>Linha do tempo</h3><p>Histórico completo do pedido.</p></div></div><div className="timeline-list"><article><i className="created"><Package/></i><div><b>Pedido criado</b><p>{order.source === "admin" ? "Lançado pelo administrativo" : "Recebido pelo catálogo"}</p><small>{new Date(order.createdAt).toLocaleString("pt-BR")}</small></div></article>{orderEvents.map((event) => <article key={event.id}><i className={event.type}><span>{event.status === "Saiu para entrega" ? <Truck/> : event.type === "comment" ? <MessageSquare/> : <Clock3/>}</span></i><div><b>{event.type === "status" ? event.status : event.type === "comment" ? "Comentário" : "Pedido editado"}</b><p>{event.content}</p><small>{new Date(event.createdAt).toLocaleString("pt-BR")}{event.createdBy ? ` · ${event.createdBy}` : ""}</small></div></article>)}</div></aside>
+      <aside className="order-timeline"><div className="detail-title"><Clock3/><div><h3>Linha do tempo</h3><p>Histórico completo do pedido.</p></div></div><div className="timeline-list"><article><i className="created"><Package/></i><div><b>Pedido criado</b><p>{order.source === "admin" ? "Lançado pelo administrativo" : "Recebido pelo catálogo"}</p><small>{new Date(order.createdAt).toLocaleString("pt-BR")}</small></div></article>{orderEvents.map((event) => {
+        const visual = event.type === "status" ? statusVisual(event.status) : event.type === "comment" ? { icon: <MessageSquare/>, className: "comment" } : { icon: <Pencil/>, className: "edit" };
+        return <article key={event.id}><i className={visual.className}>{visual.icon}</i><div><b>{event.type === "status" ? event.status : event.type === "comment" ? "Comentário" : "Pedido editado"}</b><p>{event.content}</p><small>{new Date(event.createdAt).toLocaleString("pt-BR")}{event.createdBy ? ` · ${event.createdBy}` : ""}</small></div></article>;
+      })}</div></aside>
     </div>
   </aside></div>;
 }
