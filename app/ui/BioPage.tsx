@@ -1,10 +1,10 @@
 "use client";
 import { useEffect,useState } from "react";
 import { ArrowRight,BadgeCheck,MapPin,MessageCircle } from "lucide-react";
-import { catalog,Product } from "../catalog";
+import { Product } from "../catalog";
 const phone="5591983160016";
 const wa=(message:string)=>`https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-export default function BioPage(){const [products,setProducts]=useState<Product[]>(catalog);useEffect(()=>{fetch("/api/products").then(r=>r.ok?r.json():null).then(d=>d?.products&&setProducts(d.products)).catch(()=>{})},[]);const featured=products.filter(p=>p.active!==false&&p.publicVisible!==false&&p.featured).slice(0,8);return <main className="bio-page"><div className="bio-shell">
+export default function BioPage(){const [products,setProducts]=useState<Product[]>([]);useEffect(()=>{fetch("/api/products").then(r=>r.ok?r.json():null).then(d=>d?.products&&setProducts(d.products)).catch(()=>{})},[]);const featured=products.filter(p=>p.active!==false&&p.publicVisible!==false&&p.featured).slice(0,8);return <main className="bio-page"><div className="bio-shell">
  <header className="bio-cover"><img src="/laboratorio-hero.jpg" alt="Aparelhos ortodônticos produzidos pelo Laboratório Orto Fernandes"/><div className="cover-shade"/></header>
  <section className="bio-profile"><div className="bio-avatar"><img src="/logo-orto.jpg" alt="Logo do Laboratório Orto Fernandes"/></div><h1>Orto Fernandes</h1><p className="bio-copy">Aparelhos ortodônticos feitos com precisão, acabamento e cuidado para dentistas e clínicas.</p><div className="bio-meta"><span><MapPin size={13}/> Belém e região</span><span><BadgeCheck size={13}/> Atendimento especializado</span></div></section>
  <section className="bio-actions"><a className="bio-secondary-action" href={wa("Olá! Vim pelo Instagram da Orto Fernandes e gostaria de falar com a equipe.")} target="_blank"><MessageCircle size={18}/><span><b>Falar com a equipe</b><small>Atendimento pelo WhatsApp</small></span><ArrowRight size={17}/></a></section>

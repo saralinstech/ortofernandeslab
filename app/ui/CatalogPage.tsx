@@ -2,7 +2,7 @@
 import { useEffect,useMemo,useState } from "react";
 import Link from "next/link";
 import { ArrowLeft,Check,Info,MessageCircle,Minus,PackageOpen,Plus,Search,ShoppingBag,X } from "lucide-react";
-import { catalog,Product } from "../catalog";
+import { Product } from "../catalog";
 
 type CartItem=Product&{quantity:number};
 const phone="5591983160016";
@@ -10,7 +10,7 @@ const money=(n:number)=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL
 const wa=(message:string)=>`https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
 export default function CatalogPage(){
- const [products,setProducts]=useState<Product[]>(catalog),[filter,setFilter]=useState("Todos"),[query,setQuery]=useState(""),[cart,setCart]=useState<CartItem[]>([]),[open,setOpen]=useState(false),[customer,setCustomer]=useState(""),[sending,setSending]=useState(false),[sendError,setSendError]=useState(""),[whatsappLink,setWhatsappLink]=useState("");
+ const [products,setProducts]=useState<Product[]>([]),[filter,setFilter]=useState("Todos"),[query,setQuery]=useState(""),[cart,setCart]=useState<CartItem[]>([]),[open,setOpen]=useState(false),[customer,setCustomer]=useState(""),[sending,setSending]=useState(false),[sendError,setSendError]=useState(""),[whatsappLink,setWhatsappLink]=useState("");
  useEffect(()=>{fetch("/api/products").then(r=>r.ok?r.json():null).then(d=>d?.products&&setProducts(d.products)).catch(()=>{})},[]);
  const cats=["Todos",...Array.from(new Set(products.map(p=>p.category)))];
  const shown=useMemo(()=>products.filter(p=>p.active!==false&&p.publicVisible!==false&&(filter==="Todos"||p.category===filter)&&p.name.toLowerCase().includes(query.toLowerCase())),[products,filter,query]);

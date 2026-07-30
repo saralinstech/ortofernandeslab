@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import postgres from "postgres";
 
 const databaseUrl = process.env.DATABASE_URL?.trim();
@@ -18,13 +18,16 @@ const ssl = process.env.DATABASE_SSL?.toLowerCase() === "disable" || urlDisables
   : "require";
 const sql = postgres(databaseUrl, { ssl, max: 1, prepare: false });
 
+const migrationsDir = new URL("../db/postgres-migrations/", import.meta.url);
+
 try {
-  const migration = await readFile(
-    new URL("../db/postgres-migrations/0000_initial.sql", import.meta.url),
-    "utf8",
-  );
-  await sql.unsafe(migration);
-  console.log("Estrutura PostgreSQL criada com sucesso.");
+  const files = (await readdir(migrationsDir)).filter((name) => name.endsWith(".sql")).sort();
+  for (const file of files) {
+    const migration = await readFile(new URL(file, migrationsDir), "utf8");
+    await sql.unsafe(migration);
+    console.log(`Aplicada: ${file}`);
+  }
+  console.log("Estrutura PostgreSQL atualizada com sucesso.");
 } finally {
   await sql.end();
 }

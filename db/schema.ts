@@ -59,7 +59,7 @@ export const products = pgTable("products", {
   featured: boolean("featured").notNull().default(false),
   publicVisible: boolean("public_visible").notNull().default(true),
   active: boolean("active").notNull().default(true),
-});
+}, (table) => [uniqueIndex("products_name_unique_active").on(table.name).where(sql`active`)]);
 
 export const staff = pgTable("staff", {
   id: serial("id").primaryKey(),
