@@ -46,8 +46,8 @@
 @media(max-width:600px){.product-search{min-width:0;width:100%}.order-filter-bar:has(.product-search){flex-direction:column;align-items:stretch;gap:11px}}
 
 /* Ações da linha de produto: editar + remover */
-.products-table .admin-table-head,.products-table .admin-product-row{grid-template-columns:minmax(190px,1fr) minmax(190px,1fr) 145px 205px}
-.row-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px}.row-actions .edit-btn{flex:1}
+.products-table .admin-table-head,.products-table .admin-product-row{grid-template-columns:minmax(190px,1fr) minmax(200px,1fr) 150px 125px}
+.row-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px}.edit-btn.icon-only{flex:0 0 auto;width:34px;height:34px;padding:0;display:grid;place-items:center}.edit-btn.icon-only:hover{background:#eef4fc;border-color:#bfd4ea}
 .remove-btn{flex:0 0 auto;width:34px;height:34px;border:1px solid #f2d9d9;border-radius:10px;background:#fff5f5;color:#b64b4b;display:grid;place-items:center}.remove-btn:hover{background:#ffe8e8;border-color:#e9c4c4}
 .row-confirm{display:grid;justify-items:end;gap:6px}.confirm-buttons{display:flex;gap:6px}.row-confirm>span{color:#8a5b5b;font-size:12px;font-weight:750}.row-confirm button{min-height:30px;padding:6px 9px;border:0;border-radius:9px;font-size:12px;font-weight:780}.row-confirm button:disabled{opacity:.6}.confirm-yes{background:#b64b4b;color:#fff}.confirm-yes:hover:not(:disabled){background:#a13f3f}.confirm-no{background:#eef2f7;color:#5c718a}
 @media(max-width:800px){.products-table .admin-product-row{grid-template-columns:1fr auto}.row-actions,.row-confirm{justify-content:flex-start}}
