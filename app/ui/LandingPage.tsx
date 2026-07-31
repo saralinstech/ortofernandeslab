@@ -3,6 +3,7 @@ import { useEffect,useState } from "react";
 import Link from "next/link";
 import { ArrowRight,BadgeCheck,CalendarClock,CheckCircle2,MessageCircle,Ruler,ShieldCheck,Sparkles,Truck } from "lucide-react";
 import { Product } from "../catalog";
+import { fetchProducts } from "../fetch-products";
 
 const phone="5591983160016";
 const wa=(message:string)=>`https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
@@ -24,16 +25,7 @@ const passos=[
 export default function LandingPage(){
  const [products,setProducts]=useState<Product[]>([]);
  const [loading,setLoading]=useState(true);
- // Uma falha isolada deixaria a vitrine vazia para sempre, já que não há nova
- // tentativa. Como esta é a página de conversão, tentamos de novo antes de
- // desistir.
- useEffect(()=>{let vivo=true;
-  (async()=>{for(let tentativa=0;tentativa<3;tentativa++){
-    try{const r=await fetch("/api/products");if(r.ok){const d=await r.json();if(d?.products){if(vivo){setProducts(d.products);setLoading(false)}return}}}catch{}
-    await new Promise(r=>setTimeout(r,400*(tentativa+1)));
-   }
-   if(vivo)setLoading(false)})();
-  return()=>{vivo=false}},[]);
+ useEffect(()=>{let vivo=true;fetchProducts().then(lista=>{if(!vivo)return;if(lista)setProducts(lista);setLoading(false)});return()=>{vivo=false}},[]);
  // O botão flutuante só entra depois do hero: ali o CTA principal já está à
  // vista e o flutuante cobriria o texto.
  const [showFloat,setShowFloat]=useState(false);
@@ -101,7 +93,8 @@ export default function LandingPage(){
 
   <footer className="lp-footer">
    <div className="lp-footer-brand"><img src="/logo-orto.jpg" alt="Logo do Laboratório Orto Fernandes"/><div><b>Laboratório Orto Fernandes</b><span>Belém e região · 98316-0016</span></div></div>
-   <nav><Link href="/bio">Bio</Link><Link href="/catalogo">Catálogo com preços</Link></nav>
+   {/* rel=nofollow: a bio não deve ser indexada a partir da landing. */}
+   <nav><Link href="/bio" rel="nofollow">Bio</Link></nav>
   </footer>
 
   {showFloat&&<a className="lp-float" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer" aria-label="Falar no WhatsApp"><MessageCircle size={22}/><span>Falar no WhatsApp</span></a>}

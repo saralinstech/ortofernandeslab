@@ -3,6 +3,7 @@ import { useCallback,useEffect,useMemo,useRef,useState } from "react";
 import Link from "next/link";
 import { ArrowUp,Check,Info,MessageCircle,Minus,PackageOpen,Plus,Search,ShoppingBag,X } from "lucide-react";
 import { Product } from "../catalog";
+import { fetchProducts } from "../fetch-products";
 
 type CartItem=Product&{quantity:number};
 const phone="5591983160016";
@@ -16,7 +17,7 @@ const byName=(a:Product,b:Product)=>a.name.trim().localeCompare(b.name.trim(),"p
 
 export default function CatalogPage(){
  const [products,setProducts]=useState<Product[]>([]),[loading,setLoading]=useState(true),[filter,setFilter]=useState("Todos"),[query,setQuery]=useState(""),[cart,setCart]=useState<CartItem[]>([]),[open,setOpen]=useState(false),[customer,setCustomer]=useState(""),[sending,setSending]=useState(false),[sendError,setSendError]=useState(""),[whatsappLink,setWhatsappLink]=useState("");
- useEffect(()=>{fetch("/api/products").then(r=>r.ok?r.json():null).then(d=>d?.products&&setProducts(d.products)).catch(()=>{}).finally(()=>setLoading(false))},[]);
+ useEffect(()=>{let vivo=true;fetchProducts().then(lista=>{if(!vivo)return;if(lista)setProducts(lista);setLoading(false)});return()=>{vivo=false}},[]);
  // Nome e categoria são normalizados aqui porque vêm do cadastro manual e
  // chegam com espaço sobrando, o que criaria famílias duplicadas na lista.
  const clean=useMemo(()=>products.map(p=>({...p,name:p.name.trim(),category:p.category.trim()})),[products]);

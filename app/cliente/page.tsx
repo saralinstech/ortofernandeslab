@@ -1,2 +1,5 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+// Página de apoio, fora do índice.
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 export default function Cliente(){return <main className="simple-page"><section className="simple-card"><div className="mini-logo">OF</div><span className="kicker">Área do cliente</span><h1>Seu espaço Orto Fernandes</h1><p>A área do cliente está sendo preparada para reunir seus pedidos, repetições e acompanhamento de produção.</p><a className="wa-button" href="https://wa.me/5591983160016?text=Ol%C3%A1%21%20Gostaria%20de%20fazer%20meu%20cadastro%20como%20cliente%20da%20Orto%20Fernandes." target="_blank">Quero fazer meu cadastro</a><Link className="text-link" href="/bio">Voltar para a bio</Link></section></main>}
