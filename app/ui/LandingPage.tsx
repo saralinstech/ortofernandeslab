@@ -1,13 +1,16 @@
 "use client";
 import { useEffect,useState } from "react";
 import Link from "next/link";
-import { ArrowRight,BadgeCheck,CalendarClock,CheckCircle2,MessageCircle,Ruler,ShieldCheck,Sparkles,Truck } from "lucide-react";
+import { ArrowRight,BadgeCheck,CalendarClock,CheckCircle2,Instagram,Ruler,ShieldCheck,Sparkles,Truck } from "lucide-react";
+import { WhatsAppIcon } from "./icons";
 import { Product } from "../catalog";
 import { fetchProducts } from "../fetch-products";
 
 const phone="5591983160016";
 const wa=(message:string)=>`https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 const CTA_PRINCIPAL=wa("Olá! Vim pelo site da Orto Fernandes e gostaria de solicitar um orçamento.");
+const INSTAGRAM_USER="ortofernandeslab";
+const INSTAGRAM=`https://instagram.com/${INSTAGRAM_USER}`;
 
 const diferenciais=[
  {icon:Ruler,title:"Precisão em cada peça",text:"Aparelhos confeccionados sob medida, com acabamento conferido peça a peça antes da entrega."},
@@ -35,7 +38,7 @@ export default function LandingPage(){
  return <main className="lp">
   <header className="lp-topbar">
    <div className="lp-brand"><img src="/logo-orto.jpg" alt="Logo do Laboratório Orto Fernandes"/><div><b>ORTO FERNANDES</b><small>LABORATÓRIO ORTODÔNTICO</small></div></div>
-   <a className="lp-topbar-cta" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer"><MessageCircle size={16}/> <span>Falar agora</span></a>
+   <a className="lp-topbar-cta" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={16}/> <span>Falar agora</span></a>
   </header>
 
   <section className="lp-hero">
@@ -43,7 +46,7 @@ export default function LandingPage(){
     <span className="lp-tag"><Sparkles size={13}/> Atendimento para dentistas e clínicas</span>
     <h1>Aparelhos ortodônticos com precisão e prazo que você pode combinar.</h1>
     <p>Confeccionamos aparelhos sob medida para o seu paciente, com acabamento conferido peça a peça. Busca e entrega em Belém e região.</p>
-    <a className="lp-cta" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer"><MessageCircle size={19}/><span><b>Solicitar orçamento no WhatsApp</b><small>Resposta rápida, sem compromisso</small></span><ArrowRight size={18}/></a>
+    <a className="lp-cta" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={19}/><span><b>Solicitar orçamento no WhatsApp</b><small>Resposta rápida, sem compromisso</small></span><ArrowRight size={18}/></a>
     <ul className="lp-hero-checks">
      <li><CheckCircle2 size={15}/> Sob medida para cada caso</li>
      <li><CheckCircle2 size={15}/> Busca e entrega na clínica</li>
@@ -88,15 +91,19 @@ export default function LandingPage(){
    <BadgeCheck size={30}/>
    <h2>Vamos conversar sobre o seu próximo caso?</h2>
    <p>Conte qual aparelho você precisa e a equipe responde com as opções e o prazo de produção.</p>
-   <a className="lp-cta lp-cta-light" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer"><MessageCircle size={19}/><span><b>Chamar no WhatsApp</b><small>98316-0016</small></span><ArrowRight size={18}/></a>
+   <a className="lp-cta lp-cta-light" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={19}/><span><b>Chamar no WhatsApp</b><small>Atendimento direto com a equipe</small></span><ArrowRight size={18}/></a>
   </section>
 
   <footer className="lp-footer">
-   <div className="lp-footer-brand"><img src="/logo-orto.jpg" alt="Logo do Laboratório Orto Fernandes"/><div><b>Laboratório Orto Fernandes</b><span>Belém e região · 98316-0016</span></div></div>
-   {/* rel=nofollow: a bio não deve ser indexada a partir da landing. */}
-   <nav><Link href="/bio" rel="nofollow">Bio</Link></nav>
+   <div className="lp-footer-brand"><img src="/logo-orto.jpg" alt="Logo do Laboratório Orto Fernandes"/><div><b>Laboratório Orto Fernandes</b><span>Belém e região</span></div></div>
+   <div className="lp-social">
+    <a className="lp-social-link whatsapp" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer" aria-label="Falar no WhatsApp"><WhatsAppIcon size={17}/><span>WhatsApp</span></a>
+    <a className="lp-social-link instagram" href={INSTAGRAM} target="_blank" rel="noopener noreferrer" aria-label={`Instagram @${INSTAGRAM_USER}`}><Instagram size={17}/><span>@{INSTAGRAM_USER}</span></a>
+    {/* rel=nofollow: a bio não deve ser indexada a partir da landing. */}
+    <Link className="lp-footer-bio" href="/bio" rel="nofollow">Bio</Link>
+   </div>
   </footer>
 
-  {showFloat&&<a className="lp-float" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer" aria-label="Falar no WhatsApp"><MessageCircle size={22}/><span>Falar no WhatsApp</span></a>}
+  {showFloat&&<a className="lp-float" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer" aria-label="Falar no WhatsApp"><WhatsAppIcon size={22}/><span>Falar no WhatsApp</span></a>}
  </main>
 }

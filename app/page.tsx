@@ -23,6 +23,7 @@ const dadosEstruturados = {
   image: "/og.png",
   logo: "/logo-orto.jpg",
   telephone: "+5591983160016",
+  sameAs: ["https://instagram.com/ortofernandeslab"],
   priceRange: "$$",
   areaServed: { "@type": "City", name: "Belém", containedInPlace: { "@type": "State", name: "Pará" } },
   address: { "@type": "PostalAddress", addressLocality: "Belém", addressRegion: "PA", addressCountry: "BR" },

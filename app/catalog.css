@@ -27,3 +27,5 @@
 @media(prefers-reduced-motion:reduce){.back-to-top{transition:none}}
 /* Dentro do bloco de família quem define a largura é o bloco, não a grade. */
 .family-block .price-grid{max-width:none;margin:0;padding:0}
+/* Ícones de contato no rodapé, no lugar do número */
+.footer-social{display:inline-flex;align-items:center;gap:9px}.footer-social a{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--catalog-line);border-radius:10px;background:#fff;color:var(--catalog-navy);transition:.16s ease}.footer-social a:hover{background:#eef4fc;border-color:#bfd4ea}
