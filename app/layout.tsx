@@ -5,6 +5,7 @@ import "./globals.css";
 import "./admin.css";
 import "./bio.css";
 import "./catalog.css";
+import "./landing.css";
 
 const manrope = Manrope({ variable: "--font-sans", subsets: ["latin"] });
 const playfair = Playfair_Display({ variable: "--font-display", subsets: ["latin"] });

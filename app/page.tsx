@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
-import BioPage from "./ui/BioPage";
-export const metadata: Metadata = { title: "Bio | Orto Fernandes", description: "Bio do Laboratório Orto Fernandes: aparelhos ortodônticos, atendimento e solicitações pelo WhatsApp.", openGraph: { title: "Bio | Orto Fernandes", description: "Bio do Laboratório Orto Fernandes: aparelhos ortodônticos, atendimento e solicitações pelo WhatsApp." }, twitter: { title: "Bio | Orto Fernandes", description: "Bio do Laboratório Orto Fernandes: aparelhos ortodônticos, atendimento e solicitações pelo WhatsApp." } };
-export default function Home(){return <BioPage/>}
+import LandingPage from "./ui/LandingPage";
+const title = "Laboratório Orto Fernandes | Aparelhos ortodônticos sob medida";
+const description = "Aparelhos ortodônticos confeccionados sob medida para dentistas e clínicas, com busca e entrega em Belém e região. Solicite um orçamento pelo WhatsApp.";
+export const metadata: Metadata = { title, description, openGraph: { title, description }, twitter: { title, description } };
+export default function Home(){return <LandingPage/>}
