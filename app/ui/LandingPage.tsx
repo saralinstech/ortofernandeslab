@@ -53,7 +53,8 @@ export default function LandingPage(){
      <li><CheckCircle2 size={15}/> Prazo combinado no primeiro contato</li>
     </ul>
    </div>
-   <div className="lp-hero-image"><img src="/laboratorio-hero.jpg" alt="Aparelhos ortodônticos produzidos pelo Laboratório Orto Fernandes"/></div>
+   {/* fetchPriority alto: é a maior imagem da dobra e define o LCP. */}
+   <div className="lp-hero-image"><img src="/hero-sorriso.jpg" alt="Paciente sorrindo segurando dois aparelhos ortodônticos removíveis, um azul e um vermelho" fetchPriority="high" decoding="async" width={1600} height={1067}/></div>
   </section>
 
   <section className="lp-proof">

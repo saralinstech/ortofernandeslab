@@ -12,7 +12,8 @@
 .lp-hero h1{margin:18px 0 0;font-family:var(--font-sans);font-size:47px;font-weight:800;line-height:1.08;letter-spacing:-.045em;color:var(--lp-navy)}
 .lp-hero-text>p{margin:17px 0 0;max-width:560px;font-size:16px;line-height:1.6;color:var(--lp-muted)}
 .lp-hero-checks{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:9px}.lp-hero-checks li{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:650;color:#3d5470}.lp-hero-checks svg{flex:0 0 auto;color:#1f9d72}
-.lp-hero-image{border-radius:26px;overflow:hidden;box-shadow:0 24px 60px #0c315f26;aspect-ratio:4/3.4}.lp-hero-image img{display:block;width:100%;height:100%;object-fit:cover}
+/* Proporção próxima à da foto (3/2) para não cortar os aparelhos nas pontas. */
+.lp-hero-image{border-radius:26px;overflow:hidden;box-shadow:0 24px 60px #0c315f26;aspect-ratio:3/2.15}.lp-hero-image img{display:block;width:100%;height:100%;object-fit:cover}
 
 /* CTA */
 .lp-cta{margin-top:26px;min-height:66px;padding:13px 20px;border-radius:17px;background:#1f9d72;color:#fff;display:inline-flex;align-items:center;gap:13px;text-decoration:none;box-shadow:0 14px 34px #1f9d7233;transition:transform .16s ease,background .16s ease}.lp-cta:hover{background:#1a8a63;transform:translateY(-2px)}.lp-cta>svg{flex:0 0 auto}.lp-cta span{display:grid;gap:3px;text-align:left}.lp-cta b{font-size:15px;font-weight:800}.lp-cta small{font-size:11px;opacity:.86}
