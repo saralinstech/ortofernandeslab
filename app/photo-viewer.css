@@ -1,7 +1,4 @@
 /* Visualizador de foto compartilhado pelo catálogo e pela bio */
-.zoom-hint{position:absolute;right:10px;bottom:10px;display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:#ffffffe6;color:var(--catalog-navy);box-shadow:0 4px 14px #0c315f26;opacity:0;transition:opacity .16s ease}
-.price-card:hover .zoom-hint,.price-image:focus-visible .zoom-hint,
-.bio-product:hover .zoom-hint,.product-photo:focus-visible .zoom-hint{opacity:1}
 .photo-overlay{position:fixed;inset:0;z-index:40;padding:20px;background:#071e3bcc;backdrop-filter:blur(6px);display:grid;place-items:center;overflow:auto}
 .photo-box{position:relative;width:min(760px,100%);border-radius:22px;background:#fff;overflow:hidden;box-shadow:0 28px 70px #061d3947}
 .photo-close{position:absolute;top:12px;right:12px;z-index:2;width:38px;height:38px;border:0;border-radius:12px;background:#ffffffe8;color:var(--catalog-navy);display:grid;place-items:center;box-shadow:0 5px 18px #0c315f2b}.photo-close:hover{background:#fff}
@@ -13,8 +10,6 @@
 .photo-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .photo-actions strong{font-size:22px;font-weight:800;letter-spacing:-.03em;color:var(--catalog-navy)}
 .photo-actions .add-cart{margin:0;flex:1;min-width:210px}
-@media(max-width:560px){.photo-overlay{padding:12px}.photo-box{border-radius:18px}.photo-frame,.photo-frame img{max-height:48vh}.photo-info{padding:16px 17px 18px}.photo-info h2{font-size:18px}.photo-actions .add-cart{min-width:0;width:100%}.zoom-hint{opacity:1}}
-@media(prefers-reduced-motion:reduce){.zoom-hint{transition:none}}
 /* A foto vira botão nas duas telas; zera o estilo padrão. */
 .bio-product .product-photo{position:relative;padding:0;border:0;cursor:zoom-in;width:100%;height:100%;font:inherit}
 /* Ação da bio: leva ao WhatsApp, sem preço. */
