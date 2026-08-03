@@ -6,6 +6,7 @@ import "./admin.css";
 import "./bio.css";
 import "./catalog.css";
 import "./landing.css";
+import "./photo-viewer.css";
 
 const manrope = Manrope({ variable: "--font-sans", subsets: ["latin"] });
 const playfair = Playfair_Display({ variable: "--font-display", subsets: ["latin"] });

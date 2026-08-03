@@ -30,20 +30,5 @@
 /* Ícones de contato no rodapé, no lugar do número */
 .footer-social{display:inline-flex;align-items:center;gap:9px}.footer-social a{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--catalog-line);border-radius:10px;background:#fff;color:var(--catalog-navy);transition:.16s ease}.footer-social a:hover{background:#eef4fc;border-color:#bfd4ea}
 
-/* Foto ampliada do produto */
+/* A foto do card é clicável para ampliar */
 .price-image{position:relative;width:100%;padding:0;border:0;cursor:zoom-in;display:block;text-align:left}
-.zoom-hint{position:absolute;right:10px;bottom:10px;display:grid;place-items:center;width:32px;height:32px;border-radius:10px;background:#ffffffe6;color:var(--catalog-navy);box-shadow:0 4px 14px #0c315f26;opacity:0;transition:opacity .16s ease}
-.price-card:hover .zoom-hint,.price-image:focus-visible .zoom-hint{opacity:1}
-.photo-overlay{position:fixed;inset:0;z-index:40;padding:20px;background:#071e3bcc;backdrop-filter:blur(6px);display:grid;place-items:center;overflow:auto}
-.photo-box{position:relative;width:min(760px,100%);border-radius:22px;background:#fff;overflow:hidden;box-shadow:0 28px 70px #061d3947}
-.photo-close{position:absolute;top:12px;right:12px;z-index:2;width:38px;height:38px;border:0;border-radius:12px;background:#ffffffe8;color:var(--catalog-navy);display:grid;place-items:center;box-shadow:0 5px 18px #0c315f2b}.photo-close:hover{background:#fff}
-.photo-frame{background:#eaf2fb;display:grid;place-items:center;max-height:62vh;overflow:hidden}.photo-frame img{display:block;width:100%;height:100%;max-height:62vh;object-fit:contain}
-.photo-info{padding:20px 22px 22px;display:grid;gap:15px}
-.photo-info small{font-size:10px;font-weight:750;letter-spacing:.12em;text-transform:uppercase;color:#6f89a4}
-.photo-info h2{margin:7px 0 0;font-family:var(--font-sans);font-size:21px;font-weight:780;letter-spacing:-.03em;color:var(--catalog-navy)}
-.photo-info p{margin:9px 0 0;font-size:13px;line-height:1.55;color:var(--catalog-muted)}
-.photo-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-.photo-actions strong{font-size:22px;font-weight:800;letter-spacing:-.03em;color:var(--catalog-navy)}
-.photo-actions .add-cart{margin:0;flex:1;min-width:210px}
-@media(max-width:560px){.photo-overlay{padding:12px}.photo-box{border-radius:18px}.photo-frame,.photo-frame img{max-height:48vh}.photo-info{padding:16px 17px 18px}.photo-info h2{font-size:18px}.photo-actions .add-cart{min-width:0;width:100%}.zoom-hint{opacity:1}}
-@media(prefers-reduced-motion:reduce){.zoom-hint{transition:none}}
