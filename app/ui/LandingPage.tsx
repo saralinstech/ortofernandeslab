@@ -37,15 +37,15 @@ export default function LandingPage(){
  const vitrine=products.filter(p=>p.active!==false&&p.publicVisible!==false&&p.featured&&p.imageUrl).slice(0,6);
  return <main className="lp">
   <header className="lp-topbar">
-   <div className="lp-brand"><img src="/logo-orto.jpg" alt="Logo do Laboratório Orto Fernandes"/><div><b>ORTO FERNANDES</b><small>LABORATÓRIO ORTODÔNTICO</small></div></div>
+   <div className="lp-brand"><img src="/logo-orto.jpg" alt="Logo do Laboratório Orto Fernandes"/><div><b>ORTO FERNANDES</b><small>ORTODONTIA E ORTOPEDIA FUNCIONAL</small></div></div>
    <a className="lp-topbar-cta" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={16}/> <span>Falar agora</span></a>
   </header>
 
   <section className="lp-hero">
    <div className="lp-hero-text">
     <span className="lp-tag"><Sparkles size={13}/> Atendimento para dentistas e clínicas</span>
-    <h1>Aparelhos ortodônticos com precisão e prazo que você pode combinar.</h1>
-    <p>Confeccionamos aparelhos sob medida para o seu paciente, com acabamento conferido peça a peça. Busca e entrega em Belém e região.</p>
+    <h1>Aparelhos ortodônticos e ortopédicos com precisão e prazo que você pode combinar.</h1>
+    <p>Aparelhos fixos, removíveis, ortopédicos funcionais e placas, confeccionados sob medida para o seu paciente e conferidos peça a peça. Busca e entrega em Belém e região.</p>
     <a className="lp-cta" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={19}/><span><b>Solicitar orçamento no WhatsApp</b><small>Resposta rápida, sem compromisso</small></span><ArrowRight size={18}/></a>
     <ul className="lp-hero-checks">
      <li><CheckCircle2 size={15}/> Sob medida para cada caso</li>
@@ -54,12 +54,12 @@ export default function LandingPage(){
     </ul>
    </div>
    {/* fetchPriority alto: é a maior imagem da dobra e define o LCP. */}
-   <div className="lp-hero-image"><img src="/hero-sorriso.jpg" alt="Paciente sorrindo segurando dois aparelhos ortodônticos removíveis, um azul e um vermelho" fetchPriority="high" decoding="async" width={1600} height={1067}/></div>
+   <div className="lp-hero-image"><img src="/hero-sorriso.jpg" alt="Paciente sorrindo segurando dois aparelhos ortodônticos removíveis com expansor, um azul e um vermelho" fetchPriority="high" decoding="async" width={1600} height={1067}/></div>
   </section>
 
   <section className="lp-proof">
    <div><b>Belém e região</b><span>Atendimento presencial</span></div>
-   <div><b>Sob medida</b><span>Cada aparelho é único</span></div>
+   <div><b>Todas as famílias</b><span>Fixos, removíveis e ortopédicos</span></div>
    <div><b>Peça a peça</b><span>Acabamento conferido</span></div>
    <div><b>WhatsApp</b><span>Contato direto com a equipe</span></div>
   </section>

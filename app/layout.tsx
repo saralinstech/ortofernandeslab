@@ -17,11 +17,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const base = new URL(`${protocol}://${host}`);
   return {
     metadataBase: base,
-    title: "Orto Fernandes | Laboratório Ortodôntico",
-    description: "Peça aparelhos ortodônticos com agilidade, qualidade e atendimento próximo.",
+    title: "Orto Fernandes | Laboratório Ortodôntico e Ortopédico",
+    description: "Peça aparelhos ortodônticos e ortopédicos funcionais com agilidade, qualidade e atendimento próximo.",
     icons: { icon: "/favicon.svg" },
-    openGraph: { title: "Laboratório Orto Fernandes", description: "Precisão que transforma sorrisos.", images: [{ url: new URL("/og.png", base).toString(), width: 1728, height: 909 }] },
-    twitter: { card: "summary_large_image", title: "Laboratório Orto Fernandes", description: "Precisão que transforma sorrisos.", images: [new URL("/og.png", base).toString()] },
+    openGraph: { title: "Laboratório Orto Fernandes", description: "Aparelhos ortodônticos e ortopédicos funcionais sob medida, em Belém.", images: [{ url: new URL("/og.png", base).toString(), width: 1728, height: 909 }] },
+    twitter: { card: "summary_large_image", title: "Laboratório Orto Fernandes", description: "Aparelhos ortodônticos e ortopédicos funcionais sob medida, em Belém.", images: [new URL("/og.png", base).toString()] },
   };
 }
 

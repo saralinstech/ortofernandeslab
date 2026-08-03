@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import LandingPage from "./ui/LandingPage";
 
-const title = "Laboratório Ortodôntico em Belém | Orto Fernandes";
-const description = "Laboratório ortodôntico em Belém: aparelhos fixos, removíveis, ortopédicos e placas confeccionados sob medida para dentistas e clínicas, com busca e entrega. Peça um orçamento pelo WhatsApp.";
+const title = "Laboratório Ortodôntico e Ortopédico em Belém | Orto Fernandes";
+const description = "Laboratório de ortodontia e ortopedia funcional dos maxilares em Belém: aparelhos fixos, removíveis, ortopédicos funcionais e placas, sob medida para dentistas e clínicas, com busca e entrega. Peça um orçamento pelo WhatsApp.";
 
 export const metadata: Metadata = {
   title,
   description,
-  keywords: ["laboratório ortodôntico","laboratório ortodôntico Belém","aparelho ortodôntico sob medida","aparelho fixo","aparelho removível","contenção ortodôntica","placa miorrelaxante","expansor palatino","laboratório para dentistas","Orto Fernandes"],
+  keywords: ["laboratório ortodôntico","laboratório ortopédico","laboratório ortodôntico Belém","ortopedia funcional dos maxilares","aparelho ortopédico funcional","aparelho ortodôntico sob medida","aparelho fixo","aparelho removível","contenção ortodôntica","placa miorrelaxante","expansor palatino","bionator","disjuntor palatino","laboratório para dentistas","Orto Fernandes"],
   alternates: { canonical: "/" },
   robots: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   openGraph: { type: "website", url: "/", siteName: "Laboratório Orto Fernandes", locale: "pt_BR", title, description },
@@ -27,7 +27,13 @@ const dadosEstruturados = {
   priceRange: "$$",
   areaServed: { "@type": "City", name: "Belém", containedInPlace: { "@type": "State", name: "Pará" } },
   address: { "@type": "PostalAddress", addressLocality: "Belém", addressRegion: "PA", addressCountry: "BR" },
-  knowsAbout: ["Aparelhos ortodônticos fixos","Aparelhos ortodônticos removíveis","Aparelhos ortopédicos funcionais","Placas e contenções"],
+  knowsAbout: ["Ortodontia","Ortopedia funcional dos maxilares","Aparelhos ortodônticos fixos","Aparelhos ortodônticos removíveis","Aparelhos ortopédicos funcionais","Placas e contenções","Expansores e disjuntores palatinos"],
+  makesOffer: [
+   { "@type": "Offer", itemOffered: { "@type": "Service", name: "Aparelhos ortodônticos fixos", serviceType: "Ortodontia" } },
+   { "@type": "Offer", itemOffered: { "@type": "Service", name: "Aparelhos ortodônticos removíveis", serviceType: "Ortodontia" } },
+   { "@type": "Offer", itemOffered: { "@type": "Service", name: "Aparelhos ortopédicos funcionais", serviceType: "Ortopedia funcional dos maxilares" } },
+   { "@type": "Offer", itemOffered: { "@type": "Service", name: "Placas e contenções", serviceType: "Ortodontia" } },
+  ],
   contactPoint: { "@type": "ContactPoint", contactType: "Atendimento", telephone: "+5591983160016", availableLanguage: "Portuguese" },
 };
 
