@@ -14,13 +14,22 @@ export async function GET() {
   try {
     const access = await auth();
     const db = getDb();
-    const [orderRows, clientRows, eventRows, staffRows] = await Promise.all([
+    const [orderRows, clientRows, eventRows, staffRows, staffNames] = await Promise.all([
       db.select().from(orders).orderBy(desc(orders.id)).limit(200),
       db.select().from(clients).orderBy(desc(clients.id)),
       db.select().from(orderEvents).orderBy(desc(orderEvents.id)).limit(1000),
       access.role === "master" ? db.select({ id: staff.id, email: staff.email, name: staff.name, role: staff.role, active: staff.active, mustChangePassword: staff.mustChangePassword, createdAt: staff.createdAt }).from(staff).orderBy(desc(staff.id)) : Promise.resolve([]),
+      db.select({ email: staff.email, name: staff.name }).from(staff),
     ]);
-    return Response.json({ role: access.role, orders: orderRows.map((order) => ({ ...order, total: access.role === "master" ? order.total : null })), clients: clientRows, events: eventRows, staff: staffRows });
+    const nameByEmail = new Map(staffNames.map((person) => [person.email.toLowerCase(), person.name]));
+    const resolveCreatedBy = (createdBy: string | null) => (createdBy ? nameByEmail.get(createdBy.toLowerCase()) || createdBy : createdBy);
+    return Response.json({
+      role: access.role,
+      orders: orderRows.map((order) => ({ ...order, total: access.role === "master" ? order.total : null, createdBy: resolveCreatedBy(order.createdBy) })),
+      clients: clientRows,
+      events: eventRows.map((event) => ({ ...event, createdBy: resolveCreatedBy(event.createdBy) })),
+      staff: staffRows,
+    });
   } catch {
     return Response.json({ error: "Não autorizado" }, { status: 401 });
   }
