@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       return Response.json({ staff: { id: row.id, email: row.email, name: row.name, role: row.role, active: row.active } }, { status: 201 });
     }
     if (body.type === "order") {
-      const [row] = await db.insert(orders).values({ customerName: String(body.customerName || "Pedido administrativo"), phone: String(body.phone || ""), items: JSON.stringify(body.items || []), total: Number(body.total || 0), status: "Confirmado", source: "admin", createdBy: access.email, clientId: body.clientId ? Number(body.clientId) : null, notes: String(body.notes || "") }).returning();
+      const [row] = await db.insert(orders).values({ customerName: String(body.customerName || "Pedido administrativo"), phone: String(body.phone || ""), items: JSON.stringify(body.items || []), total: Number(body.total || 0), discount: Number(body.discount || 0), status: "Confirmado", source: "admin", createdBy: access.email, clientId: body.clientId ? Number(body.clientId) : null, notes: String(body.notes || "") }).returning();
       await db.insert(orderEvents).values({ orderId: row.id, type: "status", status: "Confirmado", content: "Pedido lançado pelo administrativo", createdBy: access.email });
       return Response.json({ order: row }, { status: 201 });
     }
@@ -85,6 +85,7 @@ export async function PATCH(request: Request) {
         notes: body.notes !== undefined ? String(body.notes) : current.notes,
         items: hasItems ? JSON.stringify(body.items) : current.items,
         total: body.total !== undefined ? Number(body.total) : current.total,
+        discount: body.discount !== undefined ? Number(body.discount) : current.discount,
         updatedAt: new Date().toISOString(),
       }).where(eq(orders.id, id)).returning();
       if (row.status !== current.status) await db.insert(orderEvents).values({ orderId: id, type: "status", status: row.status, content: `Status alterado de ${current.status} para ${row.status}`, createdBy: access.email });
