@@ -1,7 +1,7 @@
 "use client";
 import { useEffect,useState } from "react";
 import Link from "next/link";
-import { ArrowRight,BadgeCheck,CalendarClock,CheckCircle2,Instagram,Ruler,ShieldCheck,Sparkles,Truck } from "lucide-react";
+import { ArrowRight,BadgeCheck,CalendarClock,CheckCircle2,Instagram,MapPin,Ruler,ShieldCheck,Sparkles,Truck } from "lucide-react";
 import { WhatsAppIcon } from "./icons";
 import { Product } from "../catalog";
 import { fetchProducts } from "../fetch-products";
@@ -41,21 +41,29 @@ export default function LandingPage(){
    <a className="lp-topbar-cta" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={16}/> <span>Falar agora</span></a>
   </header>
 
-  <section className="lp-hero">
-   <div className="lp-hero-text">
-    <span className="lp-tag"><Sparkles size={13}/> Atendimento para dentistas e clínicas</span>
-    <h1>Aparelhos ortodônticos e ortopédicos com precisão e prazo que você pode combinar.</h1>
-    <p>Aparelhos fixos, removíveis, ortopédicos funcionais e placas, confeccionados sob medida para o seu paciente e conferidos peça a peça. Busca e entrega em Belém e região.</p>
-    <a className="lp-cta" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={19}/><span><b>Solicitar orçamento no WhatsApp</b><small>Resposta rápida, sem compromisso</small></span><ArrowRight size={18}/></a>
-    <ul className="lp-hero-checks">
-     <li><CheckCircle2 size={15}/> Sob medida para cada caso</li>
-     <li><CheckCircle2 size={15}/> Busca e entrega na clínica</li>
-     <li><CheckCircle2 size={15}/> Prazo combinado no primeiro contato</li>
-    </ul>
+  <div className="lp-hero-wrap">
+   {/* fetchPriority alto: é a maior imagem da dobra e define o LCP. Fica solta como
+       fundo da seção, sem moldura, esfumando em branco do lado do texto. */}
+   <div className="lp-hero-bg"><img src="/hero-sorriso.jpg" alt="Paciente sorrindo segurando dois aparelhos ortodônticos removíveis com expansor, um azul e um vermelho" fetchPriority="high" decoding="async" width={1600} height={1067}/></div>
+   <section className="lp-hero">
+    <div className="lp-hero-text">
+     <span className="lp-tag"><Sparkles size={13}/> Atendimento para dentistas e clínicas</span>
+     <h1>Aparelhos ortodônticos e ortopédicos com precisão e prazo que você pode combinar.</h1>
+     <p>Aparelhos fixos, removíveis, ortopédicos funcionais e placas, confeccionados sob medida para o seu paciente e conferidos peça a peça. Busca e entrega em Belém e região.</p>
+     <a className="lp-cta" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={19}/><span><b>Solicitar orçamento no WhatsApp</b><small>Resposta rápida, sem compromisso</small></span><ArrowRight size={18}/></a>
+     <ul className="lp-hero-checks">
+      <li><CheckCircle2 size={15}/> Sob medida para cada caso</li>
+      <li><CheckCircle2 size={15}/> Busca e entrega na clínica</li>
+      <li><CheckCircle2 size={15}/> Prazo combinado no primeiro contato</li>
+     </ul>
+    </div>
+   </section>
+   {/* Curva que fecha a foto de fundo, para não cortar em linha reta com a
+       seção seguinte. Escondida no mobile, onde a foto já é um bloco contido. */}
+   <div className="lp-hero-shape" aria-hidden="true">
+    <svg viewBox="0 0 1440 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,32 C220,86 420,4 700,42 C980,80 1180,10 1440,46 L1440,100 L0,100 Z" fill="#fff"/></svg>
    </div>
-   {/* fetchPriority alto: é a maior imagem da dobra e define o LCP. */}
-   <div className="lp-hero-image"><img src="/hero-sorriso.jpg" alt="Paciente sorrindo segurando dois aparelhos ortodônticos removíveis com expansor, um azul e um vermelho" fetchPriority="high" decoding="async" width={1600} height={1067}/></div>
-  </section>
+  </div>
 
   <section className="lp-proof">
    <div><b>Belém e região</b><span>Atendimento presencial</span></div>
@@ -66,7 +74,7 @@ export default function LandingPage(){
 
   {/* Some por inteiro se o catálogo não carregar: melhor não ter a seção do que
       exibir um título com a vitrine vazia. */}
-  {(loading||vitrine.length>0)&&<section className="lp-section">
+  {(loading||vitrine.length>0)&&<section className="lp-section" id="trabalhos">
    <div className="lp-section-head"><span className="lp-kicker">NOSSO TRABALHO</span><h2>Alguns aparelhos que produzimos</h2><p>Uma amostra do que sai do laboratório. Fale com a equipe para saber o que se encaixa no seu caso.</p></div>
    <div className="lp-showcase">{loading
     ?Array.from({length:6},(_,i)=><article className="lp-item skeleton" key={i}><div className="lp-item-photo"/><div className="lp-item-body"><small/><b/></div></article>)
@@ -78,12 +86,12 @@ export default function LandingPage(){
    <p className="lp-showcase-note">Produzimos outros modelos além destes. Chame no WhatsApp e conte o que você precisa.</p>
   </section>}
 
-  <section className="lp-section lp-section-soft">
-   <div className="lp-section-head"><span className="lp-kicker">POR QUE A ORTO FERNANDES</span><h2>Feito para a rotina de quem atende</h2></div>
+  <section className="lp-section lp-section-soft" id="diferenciais">
+   <div className="lp-section-head"><span className="lp-kicker">POR QUE A ORTO FERNANDES</span><h2>Feito para a rotina de quem atende</h2><p>Laboratório protético especialista em aparelhos ortodônticos e ortopédicos, pensado para o dia a dia de dentistas e clínicas.</p></div>
    <div className="lp-benefits">{diferenciais.map(({icon:Icon,title,text})=><article key={title}><i><Icon size={19}/></i><b>{title}</b><span>{text}</span></article>)}</div>
   </section>
 
-  <section className="lp-section">
+  <section className="lp-section" id="como-funciona">
    <div className="lp-section-head"><span className="lp-kicker">COMO FUNCIONA</span><h2>Do primeiro contato à entrega</h2></div>
    <div className="lp-steps">{passos.map(s=><article key={s.n}><span className="lp-step-n">{s.n}</span><b>{s.title}</b><span>{s.text}</span></article>)}</div>
   </section>
@@ -96,12 +104,33 @@ export default function LandingPage(){
   </section>
 
   <footer className="lp-footer">
-   <div className="lp-footer-brand"><img src="/logo-orto.jpg" alt="Logo do Laboratório Orto Fernandes"/><div><b>Laboratório Orto Fernandes</b><span>Belém e região</span></div></div>
-   <div className="lp-social">
-    <a className="lp-social-link whatsapp" href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer" aria-label="Falar no WhatsApp"><WhatsAppIcon size={17}/><span>WhatsApp</span></a>
-    <a className="lp-social-link instagram" href={INSTAGRAM} target="_blank" rel="noopener noreferrer" aria-label={`Instagram @${INSTAGRAM_USER}`}><Instagram size={17}/><span>@{INSTAGRAM_USER}</span></a>
-    {/* rel=nofollow: a bio não deve ser indexada a partir da landing. */}
-    <Link className="lp-footer-bio" href="/bio" rel="nofollow">Bio</Link>
+   <div className="lp-footer-top">
+    <div className="lp-footer-brand">
+     <img src="/logo-orto.jpg" alt="Logo do Laboratório Orto Fernandes"/>
+     <div><b>Laboratório Orto Fernandes</b><span>Ortodontia e ortopedia funcional</span></div>
+     <p>Laboratório protético especialista em aparelhos ortodônticos e ortopédicos, a serviço de dentistas e clínicas de Belém e região.</p>
+    </div>
+
+    <nav className="lp-footer-col" aria-label="Navegação do rodapé">
+     <b>Navegação</b>
+     <a href="#trabalhos">Nosso trabalho</a>
+     <a href="#diferenciais">Diferenciais</a>
+     <a href="#como-funciona">Como funciona</a>
+     {/* rel=nofollow: a bio não deve ser indexada a partir da landing. */}
+     <Link href="/bio" rel="nofollow">Bio</Link>
+    </nav>
+
+    <div className="lp-footer-col">
+     <b>Fale com a gente</b>
+     <a href={CTA_PRINCIPAL} target="_blank" rel="noopener noreferrer"><WhatsAppIcon size={15}/> WhatsApp</a>
+     <a href={INSTAGRAM} target="_blank" rel="noopener noreferrer"><Instagram size={15}/> @{INSTAGRAM_USER}</a>
+     <span className="lp-footer-location"><MapPin size={15}/> Belém e região, PA</span>
+    </div>
+   </div>
+
+   <div className="lp-footer-bottom">
+    <span>© {new Date().getFullYear()} Laboratório Orto Fernandes. Todos os direitos reservados.</span>
+    <span>Feito para dentistas e clínicas que confiam o caso a um especialista.</span>
    </div>
   </footer>
 
