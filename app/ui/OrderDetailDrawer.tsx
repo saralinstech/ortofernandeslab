@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Ban, BadgeCheck, CircleCheckBig, CircleDashed, Clock3, Cog, Hourglass, MessageSquare, Package, PackageCheck, Pencil, Percent, Plus, Save, Trash2, Truck, X } from "lucide-react";
+import { Ban, BadgeCheck, CircleCheckBig, CircleDashed, Clock3, Cog, Hourglass, MessageSquare, Package, PackageCheck, Pencil, Percent, Plus, Printer, Receipt, Save, Trash2, Truck, X } from "lucide-react";
 import type { Product } from "../catalog";
 
 type OrderItem = { id?: number; name: string; price: number; quantity: number };
@@ -37,6 +37,7 @@ export default function OrderDetailDrawer({ order, products, clients, events, ro
   const [discountPercent, setDiscountPercent] = useState(Number(order.discount || 0));
   const [comment, setComment] = useState("");
   const [saving, setSaving] = useState(false);
+  const [showReceipt, setShowReceipt] = useState(false);
 
   useEffect(() => {
     try { setItems(JSON.parse(order.items)); } catch { setItems([]); }
@@ -65,7 +66,24 @@ export default function OrderDetailDrawer({ order, products, clients, events, ro
   };
 
   return <div className="order-detail-backdrop" onMouseDown={(event) => event.target === event.currentTarget && onClose()}><aside className="order-detail-drawer">
-    <header className="order-detail-header"><div><span className="kicker">PEDIDO OF-{String(order.id).padStart(5, "0")}</span><h2>{order.customerName || "Sem identificação"}</h2><p>Solicitado em {new Date(order.createdAt).toLocaleString("pt-BR")}</p></div><button onClick={onClose} aria-label="Fechar pedido"><X/></button></header>
+    <header className="order-detail-header"><div><span className="kicker">PEDIDO OF-{String(order.id).padStart(5, "0")}</span><h2>{order.customerName || "Sem identificação"}</h2><p>Solicitado em {new Date(order.createdAt).toLocaleString("pt-BR")}</p></div><div className="order-detail-header-actions"><button type="button" className="receipt-btn" onClick={() => setShowReceipt(true)}><Receipt size={16}/> Recibo</button><button className="close-order-detail" onClick={onClose} aria-label="Fechar pedido"><X/></button></div></header>
+    {showReceipt && <div className="receipt-overlay" onMouseDown={(event) => event.target === event.currentTarget && setShowReceipt(false)}>
+      <div className="receipt-print-root">
+        <div className="receipt-toolbar no-print"><button type="button" onClick={() => window.print()}><Printer size={16}/> Imprimir</button><button type="button" onClick={() => setShowReceipt(false)}><X size={16}/> Fechar</button></div>
+        <div className="receipt-paper">
+          <header className="receipt-header"><img src="/logo-orto.jpg" alt="Logo do Laboratório Orto Fernandes"/><div><b>Laboratório Orto Fernandes</b><span>Ortodontia e ortopedia funcional</span></div></header>
+          <div className="receipt-meta"><div><span>Pedido</span><b>OF-{String(order.id).padStart(5, "0")}</b></div><div><span>Data</span><b>{new Date(order.createdAt).toLocaleDateString("pt-BR")}</b></div><div><span>Status</span><b>{status}</b></div></div>
+          <div className="receipt-client"><b>Cliente</b><p>{customerName || "Sem identificação"}</p>{phone && <p>WhatsApp: {phone}</p>}</div>
+          <table className="receipt-items"><thead><tr><th>Produto</th><th>Qtd.</th><th>Valor unit.</th><th>Subtotal</th></tr></thead><tbody>{items.map((item, index) => <tr key={`${item.id}-${index}`}><td>{item.name}</td><td>{item.quantity}</td><td>{money(Number(item.price || 0))}</td><td>{money(Number(item.price || 0) * item.quantity)}</td></tr>)}</tbody></table>
+          <div className="receipt-totals">
+            <div><span>Subtotal</span><b>{money(subtotal)}</b></div>
+            {discountPercent > 0 && <div><span>Desconto ({discountPercent}%)</span><b>-{money(discountAmount)}</b></div>}
+            <div className="receipt-grand"><span>Total</span><b>{money(total)}</b></div>
+          </div>
+          <p className="receipt-footer">Obrigado pela preferência! Qualquer dúvida, fale com a gente pelo WhatsApp.</p>
+        </div>
+      </div>
+    </div>}
     <div className="order-detail-grid">
       <section className="order-detail-content">
         <div className="detail-section"><div className="detail-title"><Package/><div><h3>Produtos solicitados</h3><p>Revise os itens, quantidades e valores.</p></div></div><div className="detail-items">{items.map((item, index) => <div className="detail-item" key={`${item.id}-${index}`}><div><b>{item.name}</b><small>{money(Number(item.price || 0))} por unidade</small></div><label>Qtd.<input type="number" min="1" value={item.quantity} onChange={(event) => setItems((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, quantity: Number(event.target.value) } : entry))}/></label><strong>{money(Number(item.price || 0) * item.quantity)}</strong><button onClick={() => setItems((current) => current.filter((_, itemIndex) => itemIndex !== index))} aria-label={`Remover ${item.name}`}><Trash2/></button></div>)}</div><label className="add-order-item"><Plus/> Adicionar produto<select value="" onChange={(event) => addProduct(event.target.value)}><option value="">Selecione um produto...</option>{products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}</select></label>{role === "master" && <label className="detail-discount"><Percent/> Desconto (%)<input type="number" min="0" max="100" step="1" value={discountPercent} onChange={(event) => setDiscountPercent(Math.max(0, Math.min(100, Number(event.target.value))))}/></label>}<div className="detail-total"><span>Subtotal</span><b>{role === "master" ? money(subtotal) : "Restrito"}</b></div>{role === "master" && discountPercent > 0 && <div className="detail-total discount-line"><span>Desconto ({discountPercent}%)</span><b>-{money(discountAmount)}</b></div>}<div className="detail-total grand-total"><span>Total do pedido</span><b>{role === "master" ? money(total) : "Restrito"}</b></div></div>
