@@ -7,7 +7,7 @@ import type { Product } from "../catalog";
 type OrderItem = { id?: number; name: string; price: number; quantity: number };
 type Client = { id: number; name: string; clinic?: string | null };
 export type OrderEventRecord = { id: number; orderId: number; type: string; status?: string | null; content?: string | null; createdBy?: string | null; createdAt: string };
-export type OrderRecord = { id: number; customerName: string | null; phone: string | null; items: string; total: number | null; discount?: number | null; status: string; source: string; createdBy?: string | null; clientId?: number | null; notes?: string | null; updatedAt?: string; createdAt: string };
+export type OrderRecord = { id: number; customerName: string | null; phone: string | null; items: string; total: number | null; discount?: number | null; deliveryFee?: number | null; status: string; source: string; createdBy?: string | null; clientId?: number | null; notes?: string | null; updatedAt?: string; createdAt: string };
 
 const statuses = ["Aguardando confirmação", "Confirmado", "Não finalizado", "Em produção", "Pronto", "Saiu para entrega", "Entregue", "Cancelado"];
 const money = (value: number) => value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -35,6 +35,8 @@ export default function OrderDetailDrawer({ order, products, clients, events, ro
   const [items, setItems] = useState<OrderItem[]>([]);
   // order.discount guarda a porcentagem (0-100), não um valor em reais.
   const [discountPercent, setDiscountPercent] = useState(Number(order.discount || 0));
+  // Taxa de entrega em reais, lançada manualmente conforme o endereço do cliente.
+  const [deliveryFee, setDeliveryFee] = useState(Number(order.deliveryFee || 0));
   const [comment, setComment] = useState("");
   const [saving, setSaving] = useState(false);
   const [showReceipt, setShowReceipt] = useState(false);
@@ -42,16 +44,17 @@ export default function OrderDetailDrawer({ order, products, clients, events, ro
   useEffect(() => {
     try { setItems(JSON.parse(order.items)); } catch { setItems([]); }
     setDiscountPercent(Number(order.discount || 0));
-  }, [order.id, order.items, order.discount]);
+    setDeliveryFee(Number(order.deliveryFee || 0));
+  }, [order.id, order.items, order.discount, order.deliveryFee]);
 
   const subtotal = useMemo(() => items.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0), [items]);
   const discountAmount = subtotal * (Math.min(100, Math.max(0, discountPercent)) / 100);
-  const total = Math.max(0, subtotal - discountAmount);
+  const total = Math.max(0, subtotal - discountAmount) + Math.max(0, deliveryFee);
   const orderEvents = events.filter((event) => event.orderId === order.id).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
   const save = async () => {
     setSaving(true);
-    await onSave({ status, customerName, phone, clientId: clientId || null, notes, items, discount: discountPercent, total, recordEdit: true });
+    await onSave({ status, customerName, phone, clientId: clientId || null, notes, items, discount: discountPercent, deliveryFee, total, recordEdit: true });
     setSaving(false);
   };
   const addProduct = (productId: string) => {
@@ -78,6 +81,7 @@ export default function OrderDetailDrawer({ order, products, clients, events, ro
           <div className="receipt-totals">
             <div><span>Subtotal</span><b>{money(subtotal)}</b></div>
             {discountPercent > 0 && <div><span>Desconto ({discountPercent}%)</span><b>-{money(discountAmount)}</b></div>}
+            {deliveryFee > 0 && <div><span>Taxa de entrega</span><b>{money(deliveryFee)}</b></div>}
             <div className="receipt-grand"><span>Total</span><b>{money(total)}</b></div>
           </div>
           <p className="receipt-footer">Obrigado pela preferência! Qualquer dúvida, fale com a gente pelo WhatsApp.</p>
@@ -86,7 +90,7 @@ export default function OrderDetailDrawer({ order, products, clients, events, ro
     </div>}
     <div className="order-detail-grid">
       <section className="order-detail-content">
-        <div className="detail-section"><div className="detail-title"><Package/><div><h3>Produtos solicitados</h3><p>Revise os itens, quantidades e valores.</p></div></div><div className="detail-items">{items.map((item, index) => <div className="detail-item" key={`${item.id}-${index}`}><div><b>{item.name}</b><small>{money(Number(item.price || 0))} por unidade</small></div><label>Qtd.<input type="number" min="1" value={item.quantity} onChange={(event) => setItems((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, quantity: Number(event.target.value) } : entry))}/></label><strong>{money(Number(item.price || 0) * item.quantity)}</strong><button onClick={() => setItems((current) => current.filter((_, itemIndex) => itemIndex !== index))} aria-label={`Remover ${item.name}`}><Trash2/></button></div>)}</div><label className="add-order-item"><Plus/> Adicionar produto<select value="" onChange={(event) => addProduct(event.target.value)}><option value="">Selecione um produto...</option>{products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}</select></label>{role === "master" && <label className="detail-discount"><Percent/> Desconto (%)<input type="number" min="0" max="100" step="1" value={discountPercent} onChange={(event) => setDiscountPercent(Math.max(0, Math.min(100, Number(event.target.value))))}/></label>}<div className="detail-total"><span>Subtotal</span><b>{role === "master" ? money(subtotal) : "Restrito"}</b></div>{role === "master" && discountPercent > 0 && <div className="detail-total discount-line"><span>Desconto ({discountPercent}%)</span><b>-{money(discountAmount)}</b></div>}<div className="detail-total grand-total"><span>Total do pedido</span><b>{role === "master" ? money(total) : "Restrito"}</b></div></div>
+        <div className="detail-section"><div className="detail-title"><Package/><div><h3>Produtos solicitados</h3><p>Revise os itens, quantidades e valores.</p></div></div><div className="detail-items">{items.map((item, index) => <div className="detail-item" key={`${item.id}-${index}`}><div><b>{item.name}</b><small>{money(Number(item.price || 0))} por unidade</small></div><label>Qtd.<input type="number" min="1" value={item.quantity} onChange={(event) => setItems((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, quantity: Number(event.target.value) } : entry))}/></label><strong>{money(Number(item.price || 0) * item.quantity)}</strong><button onClick={() => setItems((current) => current.filter((_, itemIndex) => itemIndex !== index))} aria-label={`Remover ${item.name}`}><Trash2/></button></div>)}</div><label className="add-order-item"><Plus/> Adicionar produto<select value="" onChange={(event) => addProduct(event.target.value)}><option value="">Selecione um produto...</option>{products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}</select></label>{role === "master" && <label className="detail-discount"><Percent/> Desconto (%)<input type="number" min="0" max="100" step="1" value={discountPercent} onChange={(event) => setDiscountPercent(Math.max(0, Math.min(100, Number(event.target.value))))}/></label>}{role === "master" && <label className="detail-discount detail-delivery-fee"><Truck/> Taxa de entrega (R$)<input type="number" min="0" step="0.01" value={deliveryFee} onChange={(event) => setDeliveryFee(Math.max(0, Number(event.target.value)))}/></label>}<div className="detail-total"><span>Subtotal</span><b>{role === "master" ? money(subtotal) : "Restrito"}</b></div>{role === "master" && discountPercent > 0 && <div className="detail-total discount-line"><span>Desconto ({discountPercent}%)</span><b>-{money(discountAmount)}</b></div>}{role === "master" && deliveryFee > 0 && <div className="detail-total"><span>Taxa de entrega</span><b>{money(deliveryFee)}</b></div>}<div className="detail-total grand-total"><span>Total do pedido</span><b>{role === "master" ? money(total) : "Restrito"}</b></div></div>
         <div className="detail-section"><div className="detail-title"><MessageSquare/><div><h3>Dados e observações</h3><p>Informações operacionais deste pedido.</p></div></div><div className="detail-fields"><label>Cliente cadastrado<select value={clientId} onChange={(event) => setClientId(event.target.value)}><option value="">Não vinculado</option>{clients.map((client) => <option key={client.id} value={client.id}>{client.name}{client.clinic ? ` · ${client.clinic}` : ""}</option>)}</select></label><label>Nome ou clínica<input value={customerName} onChange={(event) => setCustomerName(event.target.value)}/></label><label>WhatsApp<input value={phone} onChange={(event) => setPhone(event.target.value)}/></label><label>Status<select value={status} onChange={(event) => setStatus(event.target.value)}>{statuses.map((value) => <option key={value}>{value}</option>)}</select></label><label className="full">Observações gerais<textarea value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Prazo, referência clínica, instruções de entrega..."/></label></div><button className="save-order-detail" onClick={save} disabled={saving}><Save/>{saving ? "Salvando..." : "Salvar alterações"}</button></div>
         <div className="detail-section"><div className="detail-title"><MessageSquare/><div><h3>Registrar ocorrência</h3><p>Adicione informações sobre problemas, contatos ou decisões.</p></div></div><textarea className="comment-box" value={comment} onChange={(event) => setComment(event.target.value)} placeholder="Ex.: Cliente confirmou o endereço; entrega reagendada para amanhã..."/><button className="add-comment" onClick={sendComment} disabled={!comment.trim()}><Plus/>Adicionar à linha do tempo</button></div>
       </section>

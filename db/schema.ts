@@ -42,6 +42,8 @@ export const orders = pgTable("orders", {
   total: doublePrecision("total").notNull(),
   // Porcentagem (0-100), não um valor em reais — aplicada sobre o subtotal dos itens.
   discount: doublePrecision("discount").notNull().default(0),
+  // Taxa de entrega em reais, lançada manualmente conforme o endereço do cliente.
+  deliveryFee: doublePrecision("delivery_fee").notNull().default(0),
   status: text("status").notNull().default("Aguardando confirmação"),
   source: text("source").notNull().default("catalog"),
   createdBy: text("created_by"),
