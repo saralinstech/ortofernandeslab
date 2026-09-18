@@ -18,7 +18,7 @@ export async function GET() {
       db.select().from(orders).orderBy(desc(orders.id)).limit(200),
       db.select().from(clients).orderBy(desc(clients.id)),
       db.select().from(orderEvents).orderBy(desc(orderEvents.id)).limit(1000),
-      access.role === "master" ? db.select({ id: staff.id, email: staff.email, name: staff.name, role: staff.role, active: staff.active, mustChangePassword: staff.mustChangePassword, createdAt: staff.createdAt }).from(staff).orderBy(desc(staff.id)) : Promise.resolve([]),
+      access.role === "master" ? db.select({ id: staff.id, email: staff.email, name: staff.name, role: staff.role, active: staff.active, mustChangePassword: staff.mustChangePassword, createdAt: staff.createdAt }).from(staff).where(eq(staff.active, true)).orderBy(desc(staff.id)) : Promise.resolve([]),
       db.select({ email: staff.email, name: staff.name }).from(staff),
     ]);
     const nameByEmail = new Map(staffNames.map((person) => [person.email.toLowerCase(), person.name]));
@@ -101,6 +101,27 @@ export async function PATCH(request: Request) {
       return Response.json({ staff: { id: row.id, email: row.email, name: row.name, role: row.role, active: row.active } });
     }
     return Response.json({ error: "Ação inválida" }, { status: 400 });
+  } catch {
+    return Response.json({ error: "Não autorizado" }, { status: 401 });
+  }
+}
+
+// Remoção é desativação, não DELETE: pedidos guardam o e-mail do colaborador
+// em orders/order_events.created_by e apagar a linha perderia essa atribuição.
+export async function DELETE(request: Request) {
+  try {
+    const access = await auth();
+    if (access.role !== "master") return Response.json({ error: "Não autorizado" }, { status: 401 });
+    const url = new URL(request.url);
+    if (url.searchParams.get("type") !== "staff") return Response.json({ error: "Ação inválida" }, { status: 400 });
+    const id = Number(url.searchParams.get("id"));
+    if (!Number.isInteger(id) || id < 1) return Response.json({ error: "Colaborador sem id válido." }, { status: 400 });
+    if (id === access.id) return Response.json({ error: "Você não pode remover o seu próprio acesso." }, { status: 400 });
+    const db = getDb();
+    const [row] = await db.update(staff).set({ active: false }).where(eq(staff.id, id)).returning();
+    if (!row) return Response.json({ error: "Colaborador não encontrado." }, { status: 404 });
+    await db.delete(adminSessions).where(eq(adminSessions.staffId, id));
+    return Response.json({ staff: { id: row.id, email: row.email, name: row.name, role: row.role, active: row.active } });
   } catch {
     return Response.json({ error: "Não autorizado" }, { status: 401 });
   }
