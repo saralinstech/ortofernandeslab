@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Ban, BadgeCheck, CircleCheckBig, CircleDashed, Clock3, Cog, Hourglass, MessageSquare, Package, PackageCheck, Pencil, Percent, Plus, Printer, Receipt, Save, Trash2, Truck, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Ban, BadgeCheck, CircleCheckBig, CircleDashed, Clock3, Cog, Download, Hourglass, MessageSquare, Package, PackageCheck, Pencil, Percent, Plus, Receipt, Save, Trash2, Truck, X } from "lucide-react";
 import type { Product } from "../catalog";
 
 type OrderItem = { id?: number; name: string; price: number; quantity: number };
@@ -40,6 +40,8 @@ export default function OrderDetailDrawer({ order, products, clients, events, ro
   const [comment, setComment] = useState("");
   const [saving, setSaving] = useState(false);
   const [showReceipt, setShowReceipt] = useState(false);
+  const [downloadingReceipt, setDownloadingReceipt] = useState(false);
+  const receiptPaperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     try { setItems(JSON.parse(order.items)); } catch { setItems([]); }
@@ -67,13 +69,27 @@ export default function OrderDetailDrawer({ order, products, clients, events, ro
     await onComment(comment.trim());
     setComment("");
   };
+  const downloadReceipt = async () => {
+    const paper = receiptPaperRef.current;
+    if (!paper) return;
+    setDownloadingReceipt(true);
+    try {
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import("html2canvas-pro"), import("jspdf")]);
+      const canvas = await html2canvas(paper, { scale: 2, backgroundColor: "#ffffff" });
+      const pdf = new jsPDF({ orientation: canvas.width > canvas.height ? "l" : "p", unit: "px", format: [canvas.width, canvas.height] });
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, canvas.width, canvas.height);
+      pdf.save(`recibo-OF-${String(order.id).padStart(5, "0")}.pdf`);
+    } finally {
+      setDownloadingReceipt(false);
+    }
+  };
 
   return <div className="order-detail-backdrop" onMouseDown={(event) => event.target === event.currentTarget && onClose()}><aside className="order-detail-drawer">
     <header className="order-detail-header"><div><span className="kicker">PEDIDO OF-{String(order.id).padStart(5, "0")}</span><h2>{order.customerName || "Sem identificação"}</h2><p>Solicitado em {new Date(order.createdAt).toLocaleString("pt-BR")}</p></div><div className="order-detail-header-actions"><button type="button" className="receipt-btn" onClick={() => setShowReceipt(true)}><Receipt size={16}/> Recibo</button><button className="close-order-detail" onClick={onClose} aria-label="Fechar pedido"><X/></button></div></header>
     {showReceipt && <div className="receipt-overlay" onMouseDown={(event) => event.target === event.currentTarget && setShowReceipt(false)}>
       <div className="receipt-print-root">
-        <div className="receipt-toolbar no-print"><button type="button" onClick={() => window.print()}><Printer size={16}/> Imprimir</button><button type="button" onClick={() => setShowReceipt(false)}><X size={16}/> Fechar</button></div>
-        <div className="receipt-paper">
+        <div className="receipt-toolbar"><button type="button" onClick={downloadReceipt} disabled={downloadingReceipt}><Download size={16}/> {downloadingReceipt ? "Gerando PDF..." : "Baixar recibo"}</button><button type="button" onClick={() => setShowReceipt(false)}><X size={16}/> Fechar</button></div>
+        <div className="receipt-paper" ref={receiptPaperRef}>
           <header className="receipt-header"><img src="/logo-orto.jpg" alt="Logo do Laboratório Orto Fernandes"/><div><b>Laboratório Orto Fernandes</b><span>Ortodontia e ortopedia funcional</span></div></header>
           <div className="receipt-meta"><div><span>Pedido</span><b>OF-{String(order.id).padStart(5, "0")}</b></div><div><span>Data</span><b>{new Date(order.createdAt).toLocaleDateString("pt-BR")}</b></div><div><span>Status</span><b>{status}</b></div></div>
           <div className="receipt-client"><b>Cliente</b><p>{customerName || "Sem identificação"}</p>{phone && <p>WhatsApp: {phone}</p>}</div>
